@@ -19,16 +19,17 @@ conda install scipy
 conda install h5py
 ```
 
-Download data and scripts:
+### Download data and scripts:
 
 ```sh
 cd data/
 curl -O http://kelvin.earth.ox.ac.uk/spk/Research/TMM/TransportMatrixConfigs/UVic_Kiel_increase_isopyc_diff.tar
 curl -O http://kelvin.earth.ox.ac.uk/spk/Research/TMM/TransportMatrixConfigs/UVic_Kiel_increase_isopyc_diff_model_data.tar
 curl -O http://kelvin.earth.ox.ac.uk/spk/Research/TMM/tmm_matlab_code.tar.gz
+git clone https://github.com/samarkhatiwala/tmm.git tmm_github
 ```
 
-Extract archives:
+### Extract archives:
 
 ```sh
 tar xf UVic_Kiel_increase_isopyc_diff.tar 
@@ -36,7 +37,7 @@ tar xf UVic_Kiel_increase_isopyc_diff_model_data.tar
 tar xfz tmm_matlab_code.tar.gz 
 ```
 
-Prepare directpry structure:
+### Prepare directpry structure:
 
 ```sh
 mkdir geometry/
@@ -46,20 +47,21 @@ mkdir -p forcing/domain/
 mkdir -p forcing/boundary/
 ```
 
-Create script `prepare_uvok_data.py` ...
+### Create script `prepare_uvok_data.py` ...
 
-Run script:
+### Run script:
 
 ```sh
 python prepare_uvok_data.py
 ```
 
-Clean up:
+### Clean up:
 
 ```
 rm -fr UVic_Kiel_increase_isopyc_diff.tar UVic_Kiel_increase_isopyc_diff/
 rm -fr UVic_Kiel_increase_isopyc_diff_model_data.tar UVic_Kiel_increase_isopyc_diff_model_data/
 rm -fr tmm_matlab_code.tar.gz gcmfaces/ Misc/ OCMIP_Utils/ PETSC/ TMM/
+rm -fr tmm_github
 ```
 
 ## Prepare model sources
