@@ -46,9 +46,12 @@ def writePETScMatrix(filename, mat):
 
 # grid.mat
 # file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
-# ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat: Hierarchical Data Format (version 5) with 512 bytes user block
+# Hierarchical Data Format (version 5) with 512 bytes user block
 with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
     
+#    print(f.keys())
+#    print(f['deltaT'][...])
+
     # mask
     msk = (f['bathy'][...] != 1.)
     nz, ny, nx = msk.shape
@@ -56,14 +59,14 @@ with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
 #    # geometry/landSeaMask.petsc
 #    lsm = spsp.csr_matrix(f['ideep'][...])
 #    writePETScMatrix('geometry/landSeaMask.petsc', lsm)
-#
+
 #    # geometry/volumes.petsc
 #    vol = ma.array(f['dv'][...], mask=msk)
 #    vol = np.reshape(vol, (nz, ny*nx)).transpose()
 #    vol = np.reshape(vol, (ny, nx, nz))
 #    vol = vol.compressed()
 #    writePETScVector('geometry/volumes.petsc', vol)
-#
+
 #    # forcing/domain/dz.petsc
 #    dz = ma.array(f['dz'][...], mask=msk)
 #    dz = np.reshape(dz, (nz, ny*nx)).transpose()
@@ -73,13 +76,135 @@ with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
 #    dz = 100*dz
 #    writePETScVector('forcing/domain/dz.petsc', dz)
 
-    # forcing/boundary/latitude.petsc
-    y = f['y'][...].transpose()
-    phi = np.zeros((ny, nx))
-    phi[...] = y[:]
-    phi = ma.array(phi, mask=msk[0,:,:])
-    phi = phi.compressed()
-    writePETScVector('forcing/boundary/latitude.petsc', phi)
+#    # forcing/boundary/latitude.petsc
+#    y = f['y'][...].transpose()
+#    phi = np.zeros((ny, nx))
+#    phi[...] = y[:]
+#    phi = ma.array(phi, mask=msk[0,:,:])
+#    phi = phi.compressed()
+#    writePETScVector('forcing/boundary/latitude.petsc', phi)
+
+# Ae_00
+# file UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat
+# Hierarchical Data Format (version 5) with 512 bytes user block
+with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat') as f:
+    data = f['Aexp']['data'][...]
+    ir = f['Aexp']['ir'][...]
+    jc = f['Aexp']['jc'][...]
+    Ae_ = spsp.csr_matrix((data, ir, jc))
+    Ae_ = Ae_.transpose(copy=True)
+#    print(f['Aexp']['jc'][0:10])
+#    print(Ae_[330,330])
+    print(Ae_.shape)
+    print(Ae_.nnz)
+#    print(Ae_.has_sorted_indices)
+print(Ae_.data[:5])
+print(Ae_[0,:5])
+print(Ae_[1,:5])
+
+# Ae index
+# file UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat
+# Hierarchical Data Format (version 5) with 512 bytes user block
+with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat') as f:
+    Ir_pre = np.array(f['Ir_pre'], dtype='i4') - 1
+#    print(f['Ir_pre'][...].shape)
+#    print(Ir_pre.shape)
+
+order = Ir_pre[0,:]
+print(order[:10])
+order = np.argsort(order)
+print(order[:10])
+
+Ae = Ae_.tocoo(copy=True)
+Ae = spsp.coo_matrix((Ae.data,(order[Ae.row],order[Ae.col])))
+Ae = Ae.tocsr()
+print(Ae.shape)
+print(Ae.nnz)
+#print(Ae.has_sorted_indices)
+print(Ae.data[:5])
+print(Ae[0,:5])
+print(Ae[1,:5])
+
+I = spsp.eye(Ae.shape[0])
+Ae = I + 28800.0*Ae
+#Ae = I + (1.0/1095.0)*Ae
+#1095/365=3 1/d = 8h = 8*3600s = 28800
+print(Ae.shape)
+print(Ae.nnz)
+#print(Ae.has_sorted_indices)
+print(Ae.data[:5])
+print(Ae[0,:5])
+print(Ae[1,:5])
+
+
+import matplotlib
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
+
+n=5000
+plt.spy(Ae_[:n,:n])
+plt.savefig('Ae_.png')
+
+plt.clf()
+plt.spy(Ae[:n,:n])
+plt.savefig('Ae.png')
+#plt.show()
+
+Ae_00 = np.fromfile('../../../playground/uvok/metos3d_uvok/data/matrix/Ae_00.petsc', dtype='4>i4,87307>i4,9143571>i4,9143571>f8', count=1)
+
+#print(Ae_00.dtype)
+#print(Ae_00['f0'].shape)
+#print(Ae_00['f1'].shape)
+#print(Ae_00['f2'].shape)
+#print(Ae_00['f3'].shape)
+#print(np.array([0,np.cumsum(Ae_00['f1'])]))
+Ae_00 = spsp.csr_matrix((Ae_00['f3'][0,:],
+                         Ae_00['f2'][0,:],
+                         np.insert(np.cumsum(Ae_00['f1'][0,:]), 0, 0),
+                        ))
+print(Ae_00.shape)
+print(Ae_00.nnz)
+#print(Ae.has_sorted_indices)
+print(Ae_00.data[:5])
+print(Ae_00[0,:5])
+print(Ae_00[1,:5])
+
+plt.clf()
+plt.spy(Ae_00[:n,:n])
+plt.savefig('Ae_00.png')
+
+
+#Ae = spsp.coo_matrix((Ae_.data, (order[Ae_.row], order[Ae_.col])))
+#Ae = Ae.tocsr()
+
+#Ae = Ae_
+
+
+
+#print(type(Ae))
+#print(Ae.shape)
+#print(Ae.nnz)
+#
+#print(Ae.indices[:5])
+#print(np.diff(Ae.indptr[:5]))
+#print(Ae.data[:5])
+#print(Ae[:10,:10])
+
+#print(order)
+#print(order[Ae_.row])
+#Ae = Ae_[Ir_pre[0,:], Ir_pre[0,:]]
+#data = Ae.data
+#row = Ae.row
+#col = Ae.col
+
+#print(Ae.row.shape)
+#print(Ae.row)
+#print(Ae.col.shape)
+#print(Ae.col)
+
+
+
+
 
 ## init/*ini.petsc
 #names = ['dic','c14','alk','o2','po4','phyt','zoop','detr','no3','diaz']
