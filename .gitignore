@@ -1,2 +1,5 @@
 material/
 **/.DS_Store
+**/*.petsc
+**/*.tar
+**/*.tar.gz

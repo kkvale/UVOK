@@ -25,6 +25,7 @@ import numpy.ma as ma
 ### -----------------------------------------------------------------------------------------------
 
 def writePETScVector(filename, vec):
+    '''Write a numpy 1d array to file in PETSc vector format.'''
     with open(filename, 'wb') as f:
         # vec id, nvec, data
         nvec, = vec.shape
@@ -32,6 +33,7 @@ def writePETScVector(filename, vec):
         np.array(vec, dtype='>f8').tofile(f)
 
 def writePETScMatrix(filename, mat):
+    '''Write a scipy sparse matrix to file in PETSc sparse format.'''
     with open(filename, 'wb') as f:
         # mat id, nrow, ncol, nnz
         nrow, ncol = mat.shape
@@ -44,17 +46,163 @@ def writePETScMatrix(filename, mat):
 
 ### -----------------------------------------------------------------------------------------------
 
-# grid.mat
-# file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
-# Hierarchical Data Format (version 5) with 512 bytes user block
-with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
-    
+def prepare_forcing():
+    pass
+#print(spio.whosmat(file_path))
+#print(file_path)
+#f = open(file_path)
+#f.close()
+#with h5.File(file_path) as f:
+#with h5.File('UVic_Kiel_increase_isopyc_diff_model_data/BiogeochemData/UVOK_input_data.mat') as f:
 #    print(f.keys())
-#    print(f['deltaT'][...])
 
-    # mask
-    msk = (f['bathy'][...] != 1.)
-    nz, ny, nx = msk.shape
+#file_path = uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
+#uvok_input = spio.loadmat(file_path)
+##print(uvok_input.keys())
+##dict_keys(['__header__', '__version__', '__globals__', 'Fe', 'aice', 'hice', 'hsno', 'swrad', 'wind'])
+#
+#for key in uvok_input.keys():
+#    print(key, type(uvok_input[key]))
+#    if isinstance(uvok_input[key], np.ndarray):
+#        print(uvok_input[key].shape)
+
+#load(uvokInputDataFile,'aice')
+#load(uvokInputDataFile,'hice')
+#load(uvokInputDataFile,'hsno')
+#load(uvokInputDataFile,'wind')
+#load(uvokInputDataFile,'Fe')
+#load(uvokInputDataFile,'swrad')
+
+
+def prepare_geometry():
+    '''
+        `volumes.petsc`
+        `landSeaMask.petsc`
+    '''
+    pass
+
+def prepare_ini():
+    pass
+
+## init/*ini.petsc
+#names = ['dic','c14','alk','o2','po4','phyt','zoop','detr','no3','diaz']
+#for name in names:
+#    filenamein = 'tmm_github/models/current/uvok1.0/matlab/InitialConditionProfiles/' + name + '.dat'
+#    # vec1d
+#    vec1d = np.loadtxt(filenamein)[:,1]
+#    # vec3d
+#    vec3d = np.zeros(msk.shape)
+#    vec3d[...] = vec1d[:, np.newaxis, np.newaxis]
+#    # mask, reshape
+#    vec = ma.array(vec3d, mask=msk)
+#    vec = np.reshape(vec, (nz, ny*nx)).transpose()
+#    vec = np.reshape(vec, (ny, nx, nz))
+#    vec = vec.compressed()
+#    # write
+#    filenameout = 'ini/' + name + 'ini.petsc'
+#    writePETScVector(filenameout, vec)
+
+
+def prepare_transport():
+    pass
+
+## Ae_00
+## file UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat
+## Hierarchical Data Format (version 5) with 512 bytes user block
+#with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat') as f:
+#    data = f['Aexp']['data'][...]
+#    ir = f['Aexp']['ir'][...]
+#    jc = f['Aexp']['jc'][...]
+#    Ae_ = spsp.csr_matrix((data, ir, jc))
+#    Ae_ = Ae_.transpose(copy=True)
+##    print(f['Aexp']['jc'][0:10])
+##    print(Ae_[330,330])
+#    print(Ae_.shape)
+#    print(Ae_.nnz)
+##    print(Ae_.has_sorted_indices)
+#print(Ae_.data[:5])
+#print(Ae_[0,:5])
+#print(Ae_[1,:5])
+#
+## Ae index
+## file UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat
+## Hierarchical Data Format (version 5) with 512 bytes user block
+#with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat') as f:
+#    Ir_pre = np.array(f['Ir_pre'], dtype='i4') - 1
+##    print(f['Ir_pre'][...].shape)
+##    print(Ir_pre.shape)
+#
+#order = Ir_pre[0,:]
+#print(order[:10])
+#order = np.argsort(order)
+#print(order[:10])
+#
+#Ae = Ae_.tocoo(copy=True)
+#Ae = spsp.coo_matrix((Ae.data,(order[Ae.row],order[Ae.col])))
+#Ae = Ae.tocsr()
+#print(Ae.shape)
+#print(Ae.nnz)
+##print(Ae.has_sorted_indices)
+#print(Ae.data[:5])
+#print(Ae[0,:5])
+#print(Ae[1,:5])
+#
+#I = spsp.eye(Ae.shape[0])
+#Ae = I + 28800.0*Ae
+##Ae = I + (1.0/1095.0)*Ae
+##1095/365=3 1/d = 8h = 8*3600s = 28800
+#print(Ae.shape)
+#print(Ae.nnz)
+##print(Ae.has_sorted_indices)
+#print(Ae.data[:5])
+#print(Ae[0,:5])
+#print(Ae[1,:5])
+#
+#writePETScMatrix('Ae_00.petsc', Ae)
+
+
+
+def prepare_uvok_data():
+    '''
+        This routine prepares the required data for UVOK simulation.
+        Assume we are located in data/ and have the following directory structure:
+        
+        data/
+        ├── forcing
+        │   ├── boundary
+        │   └── domain
+        ├── geometry
+        ├── ini
+        └── transport
+
+        We also prepared the TMM/UVIC/UVOK sources as described in `../README.md`.
+        '''
+    tmm_path        = 'tmm'
+    tmm_matlab_path = 'tmm_matlab_code'
+    uvic_tmm_path   = 'UVic_Kiel_increase_isopyc_diff'
+    uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
+
+    prepare_forcing()
+    prepare_geometry()
+    prepare_ini()
+    prepare_transport()
+
+if __name__ == "__main__":
+    prepare_uvok_data()
+
+
+
+## grid.mat
+## file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
+## Hierarchical Data Format (version 5) with 512 bytes user block
+#with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
+#
+##    print(f.keys())
+##    print(f['deltaT'][...])
+#
+#    # mask
+#    msk = (f['bathy'][...] != 1.)
+#    nz, ny, nx = msk.shape
 
 #    # geometry/landSeaMask.petsc
 #    lsm = spsp.csr_matrix(f['ideep'][...])
@@ -84,116 +232,8 @@ with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
 #    phi = phi.compressed()
 #    writePETScVector('forcing/boundary/latitude.petsc', phi)
 
-# Ae_00
-# file UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat
-# Hierarchical Data Format (version 5) with 512 bytes user block
-with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat') as f:
-    data = f['Aexp']['data'][...]
-    ir = f['Aexp']['ir'][...]
-    jc = f['Aexp']['jc'][...]
-    Ae_ = spsp.csr_matrix((data, ir, jc))
-    Ae_ = Ae_.transpose(copy=True)
-#    print(f['Aexp']['jc'][0:10])
-#    print(Ae_[330,330])
-    print(Ae_.shape)
-    print(Ae_.nnz)
-#    print(Ae_.has_sorted_indices)
-print(Ae_.data[:5])
-print(Ae_[0,:5])
-print(Ae_[1,:5])
-
-# Ae index
-# file UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat
-# Hierarchical Data Format (version 5) with 512 bytes user block
-with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat') as f:
-    Ir_pre = np.array(f['Ir_pre'], dtype='i4') - 1
-#    print(f['Ir_pre'][...].shape)
-#    print(Ir_pre.shape)
-
-order = Ir_pre[0,:]
-print(order[:10])
-order = np.argsort(order)
-print(order[:10])
-
-Ae = Ae_.tocoo(copy=True)
-Ae = spsp.coo_matrix((Ae.data,(order[Ae.row],order[Ae.col])))
-Ae = Ae.tocsr()
-print(Ae.shape)
-print(Ae.nnz)
-#print(Ae.has_sorted_indices)
-print(Ae.data[:5])
-print(Ae[0,:5])
-print(Ae[1,:5])
-
-I = spsp.eye(Ae.shape[0])
-Ae = I + 28800.0*Ae
-#Ae = I + (1.0/1095.0)*Ae
-#1095/365=3 1/d = 8h = 8*3600s = 28800
-print(Ae.shape)
-print(Ae.nnz)
-#print(Ae.has_sorted_indices)
-print(Ae.data[:5])
-print(Ae[0,:5])
-print(Ae[1,:5])
-
-writePETScMatrix('Ae_00.petsc', Ae)
 
 
-#import matplotlib
-#matplotlib.use("TkAgg")
-#import matplotlib.pyplot as plt
-#
-#n=5000
-#plt.spy(Ae_[:n,:n])
-#plt.savefig('Ae_.png')
-#
-#plt.clf()
-#plt.spy(Ae[:n,:n])
-#plt.savefig('Ae.png')
-##plt.show()
-#
-#Ae_00 = np.fromfile('../../../playground/uvok/metos3d_uvok/data/matrix/Ae_00.petsc', dtype='4>i4,87307>i4,9143571>i4,9143571>f8', count=1)
-#
-##print(Ae_00.dtype)
-##print(Ae_00['f0'].shape)
-##print(Ae_00['f1'].shape)
-##print(Ae_00['f2'].shape)
-##print(Ae_00['f3'].shape)
-##print(np.array([0,np.cumsum(Ae_00['f1'])]))
-#Ae_00 = spsp.csr_matrix((Ae_00['f3'][0,:],
-#                         Ae_00['f2'][0,:],
-#                         np.insert(np.cumsum(Ae_00['f1'][0,:]), 0, 0),
-#                        ))
-#print(Ae_00.shape)
-#print(Ae_00.nnz)
-##print(Ae.has_sorted_indices)
-#print(Ae_00.data[:5])
-#print(Ae_00[0,:5])
-#print(Ae_00[1,:5])
-#
-#plt.clf()
-#plt.spy(Ae_00[:n,:n])
-#plt.savefig('Ae_00.png')
-
-
-
-## init/*ini.petsc
-#names = ['dic','c14','alk','o2','po4','phyt','zoop','detr','no3','diaz']
-#for name in names:
-#    filenamein = 'tmm_github/models/current/uvok1.0/matlab/InitialConditionProfiles/' + name + '.dat'
-#    # vec1d
-#    vec1d = np.loadtxt(filenamein)[:,1]
-#    # vec3d
-#    vec3d = np.zeros(msk.shape)
-#    vec3d[...] = vec1d[:, np.newaxis, np.newaxis]
-#    # mask, reshape
-#    vec = ma.array(vec3d, mask=msk)
-#    vec = np.reshape(vec, (nz, ny*nx)).transpose()
-#    vec = np.reshape(vec, (ny, nx, nz))
-#    vec = vec.compressed()
-#    # write
-#    filenameout = 'ini/' + name + 'ini.petsc'
-#    writePETScVector(filenameout, vec)
 
 
 
@@ -231,3 +271,39 @@ writePETScMatrix('Ae_00.petsc', Ae)
 #./UVic_Kiel_increase_isopyc_diff/Matrix1/Data/links.mat: Hierarchical Data Format (version 5) with 512 bytes user block
 #./UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat: Hierarchical Data Format (version 5) with 512 bytes user block
 
+
+#import matplotlib
+#matplotlib.use("TkAgg")
+#import matplotlib.pyplot as plt
+#
+#n=5000
+#plt.spy(Ae_[:n,:n])
+#plt.savefig('Ae_.png')
+#
+#plt.clf()
+#plt.spy(Ae[:n,:n])
+#plt.savefig('Ae.png')
+##plt.show()
+#
+#Ae_00 = np.fromfile('../../../playground/uvok/metos3d_uvok/data/matrix/Ae_00.petsc', dtype='4>i4,87307>i4,9143571>i4,9143571>f8', count=1)
+#
+##print(Ae_00.dtype)
+##print(Ae_00['f0'].shape)
+##print(Ae_00['f1'].shape)
+##print(Ae_00['f2'].shape)
+##print(Ae_00['f3'].shape)
+##print(np.array([0,np.cumsum(Ae_00['f1'])]))
+#Ae_00 = spsp.csr_matrix((Ae_00['f3'][0,:],
+#                         Ae_00['f2'][0,:],
+#                         np.insert(np.cumsum(Ae_00['f1'][0,:]), 0, 0),
+#                        ))
+#print(Ae_00.shape)
+#print(Ae_00.nnz)
+##print(Ae.has_sorted_indices)
+#print(Ae_00.data[:5])
+#print(Ae_00[0,:5])
+#print(Ae_00[1,:5])
+#
+#plt.clf()
+#plt.spy(Ae_00[:n,:n])
+#plt.savefig('Ae_00.png')
