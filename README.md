@@ -5,7 +5,9 @@
 > **Note**
 >
 > We will use the [Miniconda Python ecosystem](https://docs.conda.io/en/latest/miniconda.html)
-> to prepare the data. Install `conda` for Mac OS X, for instance:
+> to prepare the data.
+>
+> Install `conda` for Mac OS X, for instance:
 >
 ```
 curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
@@ -34,10 +36,11 @@ git clone https://github.com/samarkhatiwala/tmm.git tmm_github
 ```sh
 tar xf UVic_Kiel_increase_isopyc_diff.tar 
 tar xf UVic_Kiel_increase_isopyc_diff_model_data.tar 
-tar xfz tmm_matlab_code.tar.gz 
+mkdir tmm_matlab_code
+tar xfz tmm_matlab_code.tar.gz -C tmm_matlab_code
 ```
 
-### Prepare directpry structure:
+### Prepare directory structure:
 
 ```sh
 mkdir geometry/
@@ -60,8 +63,8 @@ python prepare_uvok_data.py
 ```
 rm -fr UVic_Kiel_increase_isopyc_diff.tar UVic_Kiel_increase_isopyc_diff/
 rm -fr UVic_Kiel_increase_isopyc_diff_model_data.tar UVic_Kiel_increase_isopyc_diff_model_data/
-rm -fr tmm_matlab_code.tar.gz gcmfaces/ Misc/ OCMIP_Utils/ PETSC/ TMM/
-rm -fr tmm_github
+rm -fr tmm_matlab_code.tar.gz tmm_matlab_code
+rm -fr tmm
 ```
 
 ## Prepare model sources

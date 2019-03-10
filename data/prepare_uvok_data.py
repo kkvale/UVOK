@@ -136,73 +136,44 @@ print(Ae.data[:5])
 print(Ae[0,:5])
 print(Ae[1,:5])
 
-
-import matplotlib
-matplotlib.use("TkAgg")
-import matplotlib.pyplot as plt
-
-n=5000
-plt.spy(Ae_[:n,:n])
-plt.savefig('Ae_.png')
-
-plt.clf()
-plt.spy(Ae[:n,:n])
-plt.savefig('Ae.png')
-#plt.show()
-
-Ae_00 = np.fromfile('../../../playground/uvok/metos3d_uvok/data/matrix/Ae_00.petsc', dtype='4>i4,87307>i4,9143571>i4,9143571>f8', count=1)
-
-#print(Ae_00.dtype)
-#print(Ae_00['f0'].shape)
-#print(Ae_00['f1'].shape)
-#print(Ae_00['f2'].shape)
-#print(Ae_00['f3'].shape)
-#print(np.array([0,np.cumsum(Ae_00['f1'])]))
-Ae_00 = spsp.csr_matrix((Ae_00['f3'][0,:],
-                         Ae_00['f2'][0,:],
-                         np.insert(np.cumsum(Ae_00['f1'][0,:]), 0, 0),
-                        ))
-print(Ae_00.shape)
-print(Ae_00.nnz)
-#print(Ae.has_sorted_indices)
-print(Ae_00.data[:5])
-print(Ae_00[0,:5])
-print(Ae_00[1,:5])
-
-plt.clf()
-plt.spy(Ae_00[:n,:n])
-plt.savefig('Ae_00.png')
+writePETScMatrix('Ae_00.petsc', Ae)
 
 
-#Ae = spsp.coo_matrix((Ae_.data, (order[Ae_.row], order[Ae_.col])))
-#Ae = Ae.tocsr()
-
-#Ae = Ae_
-
-
-
-#print(type(Ae))
-#print(Ae.shape)
-#print(Ae.nnz)
+#import matplotlib
+#matplotlib.use("TkAgg")
+#import matplotlib.pyplot as plt
 #
-#print(Ae.indices[:5])
-#print(np.diff(Ae.indptr[:5]))
-#print(Ae.data[:5])
-#print(Ae[:10,:10])
-
-#print(order)
-#print(order[Ae_.row])
-#Ae = Ae_[Ir_pre[0,:], Ir_pre[0,:]]
-#data = Ae.data
-#row = Ae.row
-#col = Ae.col
-
-#print(Ae.row.shape)
-#print(Ae.row)
-#print(Ae.col.shape)
-#print(Ae.col)
-
-
+#n=5000
+#plt.spy(Ae_[:n,:n])
+#plt.savefig('Ae_.png')
+#
+#plt.clf()
+#plt.spy(Ae[:n,:n])
+#plt.savefig('Ae.png')
+##plt.show()
+#
+#Ae_00 = np.fromfile('../../../playground/uvok/metos3d_uvok/data/matrix/Ae_00.petsc', dtype='4>i4,87307>i4,9143571>i4,9143571>f8', count=1)
+#
+##print(Ae_00.dtype)
+##print(Ae_00['f0'].shape)
+##print(Ae_00['f1'].shape)
+##print(Ae_00['f2'].shape)
+##print(Ae_00['f3'].shape)
+##print(np.array([0,np.cumsum(Ae_00['f1'])]))
+#Ae_00 = spsp.csr_matrix((Ae_00['f3'][0,:],
+#                         Ae_00['f2'][0,:],
+#                         np.insert(np.cumsum(Ae_00['f1'][0,:]), 0, 0),
+#                        ))
+#print(Ae_00.shape)
+#print(Ae_00.nnz)
+##print(Ae.has_sorted_indices)
+#print(Ae_00.data[:5])
+#print(Ae_00[0,:5])
+#print(Ae_00[1,:5])
+#
+#plt.clf()
+#plt.spy(Ae_00[:n,:n])
+#plt.savefig('Ae_00.png')
 
 
 
