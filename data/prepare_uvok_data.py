@@ -43,6 +43,7 @@ def open_mat(file_path):
 
 def writePETScVector(filename, vec):
     '''Write a numpy 1d array into a file in PETSc vector format.'''
+    print(filename)
     with open(filename, 'wb') as f:
         # vec id, nvec, data
         nvec, = vec.shape
@@ -51,6 +52,7 @@ def writePETScVector(filename, vec):
 
 def writePETScMatrix(filename, mat):
     '''Write a scipy sparse matrix into a file in PETSc sparse format.'''
+    print(filename)
     with open(filename, 'wb') as f:
         # mat id, nrow, ncol, nnz
         nrow, ncol = mat.shape
@@ -70,10 +72,17 @@ def prepare_forcing(ctx):
 #    ctx.uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
     pass
     # prepare boundary
-#    file_path = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
-#    f = open_mat(file_path)
-##    f['aice']
+    file_path = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
+    f = open_mat(file_path)
+    for i in range(12):
+        var = ma.array(f['aice'][:,:,i].transpose(), mask=ctx.mask[0,:,:])
+        var = var.compressed()
+        writePETScVector('forcing/boundary/aice_{:02d}.petsc'.format(i), var)
 
+
+
+    
+    
 #    file_path = ctx.uvic_bgc_path + '/grid.mat'
 #    f = open_mat(file_path)
 ## grid.mat
@@ -88,18 +97,19 @@ def prepare_forcing(ctx):
 #    phi = phi.compressed()
 #    writePETScVector('forcing/boundary/latitude.petsc', phi)
 
-    file_path = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
-    f = open_mat(file_path)
-    Fe = ma.array(f['Fe'][:,:,:,0], mask=ctx.mask.transpose())
-    print(Fe.shape)
-    print(Fe.flags)
-    
-    Fe = Fe.transpose()
-    Fe = Fe.compressed()
-    print(ctx.new_index)
-    
-    Fe = Fe[ctx.new_index]
-    writePETScVector('forcing/domain/Fe.petsc', Fe)
+#    file_path = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
+#    f = open_mat(file_path)
+##    Fe = ma.array(f['Fe'][:,:,:,0], mask=ctx.mask.transpose())
+#    Fe = ma.array(f['Fe'][:,:,:,0].transpose(), mask=ctx.mask)
+#    print(Fe.shape)
+#    print(Fe.flags)
+#
+##    Fe = Fe.transpose()
+#    Fe = Fe.compressed()
+#    print(ctx.new_index)
+#
+#    Fe = Fe[ctx.new_index]
+#    writePETScVector('forcing/domain/Fe.petsc', Fe)
 
 
 #    print(f['aice'][...].shape)
@@ -113,11 +123,19 @@ def prepare_forcing(ctx):
 #    print(aice[0,:,0])
 #    aice = ma.zeros(ctx.mask.shape, mask=ctx.mask)
 #    aice[0,:,:] = f['aice'][:,:,0].transpose()
-#    aice = ma.array(f['aice'][:,:,0], mask=ctx.mask[0,:,:])
+#    aice = ma.array(f['aice'][:,:,0].transpose(), mask=ctx.mask[0,:,:])
+#    print(aice.shape)
+#    print(aice.flags)
+#    print(aice[4,:])
+#    print(aice[5,:])
+#    print(aice[6,:])
 #    aice = ma.array(f['aice'][...].transpose()[0,:,:], mask=ctx.mask[0,:,:].transpose())
 #    aice = ma.array(f['aice'][:,:,0], mask=ctx.mask[0,:,:].transpose())
 #    aice = aice.transpose()
 #    aice = aice.compressed()
+#    print(aice.shape)
+#    print(ctx.new_index.shape)
+
 
 #    print(aice.shape)
 #    print(aice[:100])
