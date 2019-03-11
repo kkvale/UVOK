@@ -32,6 +32,7 @@ class Context():
 
 def open_mat(file_path):
     '''Open a Matlab file. Use scipy if mat-v5 or h5py if newer.'''
+    print('Open ...', file_path)
     try:
         f = spio.loadmat(file_path)
         return f
@@ -97,6 +98,24 @@ def read_3d_list_from_mat_file(ctx, filename, varname, n):
 
 ### -----------------------------------------------------------------------------------------------
 
+def reshape_and_compress(ctx, var):
+    var = ma.array(var, mask=ctx.mask)
+    nz, ny, nx = ctx.mask.shape
+    var = np.reshape(var, (nz, ny*nx)).transpose()
+    var = np.reshape(var, (ny, nx, nz))
+    var = var.compressed()
+    return var
+
+def reorder_matrix(ctx, mat):
+    mat = spsp.csr_matrix((mat['data'], mat['ir'], mat['jc']))
+    mat = mat.transpose()
+    mat = mat.tocoo()
+    mat = spsp.coo_matrix((mat.data,(ctx.new_order[mat.row],ctx.new_order[mat.col])))
+    mat = mat.tocsr()
+    return mat
+
+### -----------------------------------------------------------------------------------------------
+
 def prepare_forcing_boundary(ctx, file_in, var_name, n, file_name):
     '''Prepare boundary (2d) data from given file.'''
     var = read_2d_list_from_mat_file(ctx, file_in, var_name, n)
@@ -110,139 +129,80 @@ def prepare_forcing_domain(ctx, file_in, var_name, n, file_name):
     write_petsc_vector_list(file_out, var)
 
 def prepare_forcing(ctx):
-#    ctx.tmm_path        = 'tmm'
-#    ctx.tmm_matlab_path = 'tmm_matlab_code'
-#    ctx.uvic_tmm_path   = 'UVic_Kiel_increase_isopyc_diff'
-#    ctx.uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
-
+    '''...'''
     # prepare boundary
+    # latitude
     file_in = ctx.uvic_tmm_path + '/Matrix1/Data/boxes.mat'
     lat = read_from_mat_file(ctx, file_in, 'Ybox')
     lat = lat[0,:6386]
     write_petsc_vector('forcing/boundary/latitude.petsc', lat)
-
+    #
     file_in = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
     prepare_forcing_boundary(ctx, file_in, 'aice', 12, 'aice')
     prepare_forcing_boundary(ctx, file_in, 'hice', 12, 'hice')
     prepare_forcing_boundary(ctx, file_in, 'hsno', 12, 'hsno')
     prepare_forcing_boundary(ctx, file_in, 'wind', 12, 'wind')
     prepare_forcing_boundary(ctx, file_in, 'swrad', 12, 'swrad')
-
+    
     # prepare domain
     prepare_forcing_domain(ctx, file_in, 'Fe', 12, 'Fe_dissolved')
-
+    # salt
     file_in = ctx.uvic_bgc_path + '/GCM/Salt_gcm.mat'
     salt_list = read_3d_list_from_mat_file(ctx, file_in, 'Sgcm', 12)
     salt_list = [(s - 35.0)/1000.0 for s in salt_list]
-    file_out = 'forcing/domain/' + 'Ss'
-    write_petsc_vector_list(file_out, salt_list)
-
+    write_petsc_vector_list('forcing/domain/Ss', salt_list)
+    # temp
     file_in = ctx.uvic_bgc_path + '/GCM/Theta_gcm.mat'
     prepare_forcing_domain(ctx, file_in, 'Tgcm', 12, 'Ts')
-
+    # dz
     file_in = ctx.uvic_bgc_path + '/grid.mat'
-    nz, ny, nx = ctx.mask.shape
     dz = read_from_mat_file(ctx, file_in, 'dz')
-    dz = ma.array(dz, mask=ctx.mask)
-    dz = np.reshape(dz, (nz, ny*nx)).transpose()
-    dz = np.reshape(dz, (ny, nx, nz))
-    dz = dz.compressed()
-    # scale, m to cm
+    dz = reshape_and_compress(ctx, dz)
     dz = 100*dz
     write_petsc_vector('forcing/domain/dz.petsc', dz)
 
 def prepare_geometry(ctx):
     '''Prepare geometry files.'''
+    # land sea mask
     file_in = ctx.uvic_bgc_path + '/grid.mat'
     lsm = read_from_mat_file(ctx, file_in, 'ideep')
     lsm = spsp.csr_matrix(lsm)
     write_petsc_matrix('geometry/landSeaMask.petsc', lsm)
-
-    nz, ny, nx = ctx.mask.shape
+    # volumes
     vol = read_from_mat_file(ctx, file_in, 'dv')
-    vol = ma.array(vol, mask=ctx.mask)
-    vol = np.reshape(vol, (nz, ny*nx)).transpose()
-    vol = np.reshape(vol, (ny, nx, nz))
-    vol = vol.compressed()
+    vol = reshape_and_compress(ctx, vol)
     write_petsc_vector('geometry/volumes.petsc', vol)
 
 def prepare_ini(ctx):
     '''Prepare initial tracer concentrations.'''
     names = ['dic','c14','alk','o2','po4','phyt','zoop','detr','no3','diaz']
-#    for name in names:
-#        filenamein = 'tmm_github/models/current/uvok1.0/matlab/InitialConditionProfiles/' + name + '.dat'
-#        # vec1d
-#        vec1d = np.loadtxt(filenamein)[:,1]
-#        # vec3d
-#        vec3d = np.zeros(msk.shape)
-#        vec3d[...] = vec1d[:, np.newaxis, np.newaxis]
-#        # mask, reshape
-#        vec = ma.array(vec3d, mask=msk)
-#        vec = np.reshape(vec, (nz, ny*nx)).transpose()
-#        vec = np.reshape(vec, (ny, nx, nz))
-#        vec = vec.compressed()
-#        # write
-#        filenameout = 'ini/' + name + 'ini.petsc'
-#        writePETScVector(filenameout, vec)
+    for name in names:
+        file_in = ctx.tmm_path + '/models/current/uvok1.0/matlab/InitialConditionProfiles/' + name + '.dat'
+        vec1d = np.loadtxt(file_in)[:,1]
+        vec3d = np.zeros(ctx.mask.shape)
+        vec3d[...] = vec1d[:, np.newaxis, np.newaxis]
+        vec3d = reshape_and_compress(ctx, vec3d)
+        # write
+        file_out = 'ini/' + name + 'ini.petsc'
+        write_petsc_vector(file_out, vec3d)
 
 def prepare_transport(ctx):
-    pass
+    '''Prepare transport matrices.'''
+    for i in range(12):
+        file_in = ctx.uvic_tmm_path + '/Matrix1/TMs/matrix_nocorrection_{:02d}.mat'.format(i+1)
+        f = open_mat(file_in)
+        
+        Ae = reorder_matrix(ctx, f['Aexp'])
+        I = spsp.eye(Ae.shape[0])
+        Ae = I + 28800.0*Ae
+        file_out = 'transport/Ae_{:02d}.petsc'.format(i)
+        write_petsc_matrix(file_out, Ae)
 
-## Ae_00
-## file UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat
-## Hierarchical Data Format (version 5) with 512 bytes user block
-#with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat') as f:
-#    data = f['Aexp']['data'][...]
-#    ir = f['Aexp']['ir'][...]
-#    jc = f['Aexp']['jc'][...]
-#    Ae_ = spsp.csr_matrix((data, ir, jc))
-#    Ae_ = Ae_.transpose(copy=True)
-##    print(f['Aexp']['jc'][0:10])
-##    print(Ae_[330,330])
-#    print(Ae_.shape)
-#    print(Ae_.nnz)
-##    print(Ae_.has_sorted_indices)
-#print(Ae_.data[:5])
-#print(Ae_[0,:5])
-#print(Ae_[1,:5])
-#
-## Ae index
-## file UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat
-## Hierarchical Data Format (version 5) with 512 bytes user block
-#with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat') as f:
-#    Ir_pre = np.array(f['Ir_pre'], dtype='i4') - 1
-##    print(f['Ir_pre'][...].shape)
-##    print(Ir_pre.shape)
-#
-#order = Ir_pre[0,:]
-#print(order[:10])
-#order = np.argsort(order)
-#print(order[:10])
-#
-#Ae = Ae_.tocoo(copy=True)
-#Ae = spsp.coo_matrix((Ae.data,(order[Ae.row],order[Ae.col])))
-#Ae = Ae.tocsr()
-#print(Ae.shape)
-#print(Ae.nnz)
-##print(Ae.has_sorted_indices)
-#print(Ae.data[:5])
-#print(Ae[0,:5])
-#print(Ae[1,:5])
-#
-#I = spsp.eye(Ae.shape[0])
-#Ae = I + 28800.0*Ae
-##Ae = I + (1.0/1095.0)*Ae
-##1095/365=3 1/d = 8h = 8*3600s = 28800
-#print(Ae.shape)
-#print(Ae.nnz)
-##print(Ae.has_sorted_indices)
-#print(Ae.data[:5])
-#print(Ae[0,:5])
-#print(Ae[1,:5])
-#
-#writePETScMatrix('Ae_00.petsc', Ae)
+        Ai = reorder_matrix(ctx, f['Aimp'])
+        file_out = 'transport/Ai_{:02d}.petsc'.format(i)
+        write_petsc_matrix(file_out, Ai)
 
-
+### -----------------------------------------------------------------------------------------------
 
 def prepare_uvok_data(ctx):
     '''
@@ -276,10 +236,12 @@ def prepare_uvok_data(ctx):
     ctx.new_order = np.array(f['Irr'][0,:] - 1, dtype='i4')
     ctx.new_index = np.array(f['Ir_pre'][0,:] - 1, dtype='i4')
 
-    prepare_forcing(ctx)
-    prepare_geometry(ctx)
-    prepare_ini(ctx)
-    prepare_transport(ctx)
+#    prepare_forcing(ctx)
+#    prepare_geometry(ctx)
+#    prepare_ini(ctx)
+#    prepare_transport(ctx)
+
+### -----------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     ctx = Context()
@@ -299,34 +261,6 @@ if __name__ == "__main__":
 
 
 
-#./UVic_Kiel_increase_isopyc_diff_model_data/GCM/basin_mask.mat: Matlab v5 mat-file (little endian) version 0x0100
-#./UVic_Kiel_increase_isopyc_diff_model_data/GCM/Salt_gcm.mat: Matlab v5 mat-file (little endian) version 0x0100
-#./UVic_Kiel_increase_isopyc_diff_model_data/GCM/FreshWaterForcing_gcm.mat: Matlab v5 mat-file (little endian) version 0x0100
-#./UVic_Kiel_increase_isopyc_diff_model_data/GCM/Theta_gcm.mat: Matlab v5 mat-file (little endian) version 0x0100
-#./UVic_Kiel_increase_isopyc_diff_model_data/config_data.mat: Matlab v5 mat-file (little endian) version 0x0100
-#./UVic_Kiel_increase_isopyc_diff_model_data/BiogeochemData/ice_fraction.mat: Matlab v5 mat-file (little endian) version 0x0100
-#./UVic_Kiel_increase_isopyc_diff_model_data/BiogeochemData/wind_speed.mat: Matlab v5 mat-file (little endian) version 0x0100
-#./UVic_Kiel_increase_isopyc_diff_model_data/BiogeochemData/UVOK_input_data.mat: Matlab v5 mat-file (little endian) version 0x0100
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_annualmean.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_08.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_09.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_07.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_12.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_06.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_10.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_04.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_05.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_11.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_02.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_03.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/Data/boxes.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/Data/tracer_tiles.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/Data/basis_functions.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/Data/matrix_extraction_run_data.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/Data/boxnum.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/Data/links.mat: Hierarchical Data Format (version 5) with 512 bytes user block
-#./UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat: Hierarchical Data Format (version 5) with 512 bytes user block
 
 
 #import matplotlib
@@ -487,3 +421,45 @@ if __name__ == "__main__":
 #    phi = ma.array(phi, mask=msk[0,:,:])
 #    phi = phi.compressed()
 #    writePETScVector('forcing/boundary/latitude.petsc', phi)
+
+
+## Ae_00
+## file UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat
+## Hierarchical Data Format (version 5) with 512 bytes user block
+#with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/TMs/matrix_nocorrection_01.mat') as f:
+#    data = f['Aexp']['data'][...]
+#    ir = f['Aexp']['ir'][...]
+#    jc = f['Aexp']['jc'][...]
+#    Ae_ = spsp.csr_matrix((data, ir, jc))
+#    Ae_ = Ae_.transpose(copy=True)
+##    print(f['Aexp']['jc'][0:10])
+##    print(Ae_[330,330])
+#    print(Ae_.shape)
+#    print(Ae_.nnz)
+##    print(Ae_.has_sorted_indices)
+#print(Ae_.data[:5])
+#print(Ae_[0,:5])
+#print(Ae_[1,:5])
+#
+## Ae index
+## file UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat
+## Hierarchical Data Format (version 5) with 512 bytes user block
+#with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat') as f:
+#    Ir_pre = np.array(f['Ir_pre'], dtype='i4') - 1
+##    print(f['Ir_pre'][...].shape)
+##    print(Ir_pre.shape)
+#
+#order = Ir_pre[0,:]
+#print(order[:10])
+#order = np.argsort(order)
+#print(order[:10])
+#
+
+#print(Ae.shape)
+#print(Ae.nnz)
+##print(Ae.has_sorted_indices)
+#print(Ae.data[:5])
+#print(Ae[0,:5])
+#print(Ae[1,:5])
+
+# 1095/365 = 3 1/d = 8h = 8*3600s = 28800

@@ -23,19 +23,30 @@ check_files()
   done
 }
 
+diff_files()
+{
+  for i in `$1`
+  do
+    echo "Checking ... $i"
+    diff $i ${i/ini/from_spk}
+  done
+}
+
 #check_files_crop forcing/boundary/ aice
 #check_files_crop forcing/boundary/ hice
 #check_files_crop forcing/boundary/ hsno
 #check_files_crop forcing/boundary/ wind
 #check_files_crop forcing/boundary/ swrad
-
-check_files forcing/domain/ Fe_dissolved
-check_files forcing/domain/ Ss
-check_files forcing/domain/ Ts
-
-echo "Checking ... latitude.petsc"
-dd if=forcing/boundary/latitude.petsc bs=1 skip=8 2> /dev/null | diff - from_spk/latitude.bin
-echo "Checking ... dz.petsc"
-diff forcing/domain/dz.petsc from_spk/dz.petsc
+#
+#check_files forcing/domain/ Fe_dissolved
+#check_files forcing/domain/ Ss
+#check_files forcing/domain/ Ts
+#
+#echo "Checking ... latitude.petsc"
+#dd if=forcing/boundary/latitude.petsc bs=1 skip=8 2> /dev/null | diff - from_spk/latitude.bin
+#echo "Checking ... dz.petsc"
+#diff forcing/domain/dz.petsc from_spk/dz.petsc
+#
+#diff_files 'ls ini/*ini.petsc'
 
 
