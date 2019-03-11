@@ -41,7 +41,13 @@ def open_mat(file_path):
 
 ### -----------------------------------------------------------------------------------------------
 
-def writePETScVector(filename, vec):
+def write_petsc_vector_list(filename, vec_list):
+    '''Write a list of vectors.'''
+    for i in range(len(vec_list)):
+        filename_i = filename + '_{:02d}.petsc'.format(i)
+        write_petsc_vector(filename_i, vec_list[i])
+
+def write_petsc_vector(filename, vec):
     '''Write a numpy 1d array into a file in PETSc vector format.'''
     print(filename)
     with open(filename, 'wb') as f:
@@ -50,7 +56,7 @@ def writePETScVector(filename, vec):
         np.array([1211214, nvec], dtype='>i4').tofile(f)
         np.array(vec, dtype='>f8').tofile(f)
 
-def writePETScMatrix(filename, mat):
+def write_petsc_matrix(filename, mat):
     '''Write a scipy sparse matrix into a file in PETSc sparse format.'''
     print(filename)
     with open(filename, 'wb') as f:
@@ -65,124 +71,119 @@ def writePETScMatrix(filename, mat):
 
 ### -----------------------------------------------------------------------------------------------
 
-def prepare_forcing_boundary(ctx, f, varname, filename, apply_to_data=None):
-    '''Prepare boundary (2d) data from given name.'''
-    for i in range(12):
+def read_from_mat_file(ctx, filename, varname):
+    f = open_mat(filename)
+    var = f[varname][...]
+    return var
+
+def read_2d_list_from_mat_file(ctx, filename, varname, n):
+    f = open_mat(filename)
+    var_list = []
+    for i in range(n):
         var = ma.array(f[varname][:,:,i].transpose(), mask=ctx.mask[0,:,:])
         var = var.compressed()
-        if apply_to_data:
-            var = apply_to_data(var)
-        writePETScVector('forcing/boundary/{}_{:02d}.petsc'.format(filename, i), var)
+        var_list.append(var)
+    return var_list
 
-def prepare_forcing_domain(ctx, f, varname, filename, apply_to_data=None):
-    '''Prepare boundary (2d) data from given name.'''
-    for i in range(12):
+def read_3d_list_from_mat_file(ctx, filename, varname, n):
+    f = open_mat(filename)
+    var_list = []
+    for i in range(n):
         var = ma.array(f[varname][:,:,:,i].transpose(), mask=ctx.mask)
         var = var.compressed()
         var = var[ctx.new_index]
-        if apply_to_data:
-            var = apply_to_data(var)
-        writePETScVector('forcing/domain/{}_{:02d}.petsc'.format(filename, i), var)
+        var_list.append(var)
+    return var_list
+
+### -----------------------------------------------------------------------------------------------
+
+def prepare_forcing_boundary(ctx, file_in, var_name, n, file_name):
+    '''Prepare boundary (2d) data from given file.'''
+    var = read_2d_list_from_mat_file(ctx, file_in, var_name, n)
+    file_out = 'forcing/boundary/' + file_name
+    write_petsc_vector_list(file_out, var)
+
+def prepare_forcing_domain(ctx, file_in, var_name, n, file_name):
+    '''Prepare domain (3d) data from given file.'''
+    var = read_3d_list_from_mat_file(ctx, file_in, var_name, n)
+    file_out = 'forcing/domain/' + file_name
+    write_petsc_vector_list(file_out, var)
 
 def prepare_forcing(ctx):
 #    ctx.tmm_path        = 'tmm'
 #    ctx.tmm_matlab_path = 'tmm_matlab_code'
 #    ctx.uvic_tmm_path   = 'UVic_Kiel_increase_isopyc_diff'
 #    ctx.uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
-    pass
+
     # prepare boundary
-#    file_path = ctx.uvic_tmm_path + '/Matrix1/Data'
-#    f = open_mat(file_path)
-#    take_first_entries = lambda x:
-#    prepare_forcing_boundary(ctx, f, 'YBox', 'latitude')
+    file_in = ctx.uvic_tmm_path + '/Matrix1/Data/boxes.mat'
+    lat = read_from_mat_file(ctx, file_in, 'Ybox')
+    lat = lat[0,:6386]
+    write_petsc_vector('forcing/boundary/latitude.petsc', lat)
 
-    #    file_path = ctx.uvic_bgc_path + '/grid.mat'
-    #    f = open_mat(file_path)
-    #    # forcing/boundary/latitude.petsc
-    #    y = f['y'][...].transpose()
-    #    phi = np.zeros((ny, nx))
-    #    phi[...] = y[:]
-    #    phi = ma.array(phi, mask=msk[0,:,:])
-    #    phi = phi.compressed()
-    #    writePETScVector('forcing/boundary/latitude.petsc', phi)
-
-    file_path = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
-    f = open_mat(file_path)
-    prepare_forcing_boundary(ctx, f, 'aice', 'aice')
-    prepare_forcing_boundary(ctx, f, 'hice', 'hice')
-    prepare_forcing_boundary(ctx, f, 'hsno', 'hsno')
-    prepare_forcing_boundary(ctx, f, 'wind', 'wind')
-    prepare_forcing_boundary(ctx, f, 'swrad', 'swrad')
+    file_in = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
+    prepare_forcing_boundary(ctx, file_in, 'aice', 12, 'aice')
+    prepare_forcing_boundary(ctx, file_in, 'hice', 12, 'hice')
+    prepare_forcing_boundary(ctx, file_in, 'hsno', 12, 'hsno')
+    prepare_forcing_boundary(ctx, file_in, 'wind', 12, 'wind')
+    prepare_forcing_boundary(ctx, file_in, 'swrad', 12, 'swrad')
 
     # prepare domain
-    prepare_forcing_domain(ctx, f, 'Fe', 'Fe_dissolved')
+    prepare_forcing_domain(ctx, file_in, 'Fe', 12, 'Fe_dissolved')
 
-    file_path = ctx.uvic_bgc_path + '/GCM/Salt_gcm.mat'
-    f = open_mat(file_path)
-    to_uvok_units = lambda s: (s - 35.0)/1000.0
-    prepare_forcing_domain(ctx, f, 'Sgcm', 'Ss', apply_to_data=to_uvok_units)
+    file_in = ctx.uvic_bgc_path + '/GCM/Salt_gcm.mat'
+    salt_list = read_3d_list_from_mat_file(ctx, file_in, 'Sgcm', 12)
+    salt_list = [(s - 35.0)/1000.0 for s in salt_list]
+    file_out = 'forcing/domain/' + 'Ss'
+    write_petsc_vector_list(file_out, salt_list)
 
-    file_path = ctx.uvic_bgc_path + '/GCM/Theta_gcm.mat'
-    f = open_mat(file_path)
-    prepare_forcing_domain(ctx, f, 'Tgcm', 'Ts')
+    file_in = ctx.uvic_bgc_path + '/GCM/Theta_gcm.mat'
+    prepare_forcing_domain(ctx, file_in, 'Tgcm', 12, 'Ts')
 
-## grid.mat
-## file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
-## Hierarchical Data Format (version 5) with 512 bytes user block
-#with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
-#    # forcing/domain/dz.petsc
-#    dz = ma.array(f['dz'][...], mask=msk)
-#    dz = np.reshape(dz, (nz, ny*nx)).transpose()
-#    dz = np.reshape(dz, (ny, nx, nz))
-#    dz = dz.compressed()
-#    # scale, m to cm
-#    dz = 100*dz
-#    writePETScVector('forcing/domain/dz.petsc', dz)
-
-
-
-
+    file_in = ctx.uvic_bgc_path + '/grid.mat'
+    nz, ny, nx = ctx.mask.shape
+    dz = read_from_mat_file(ctx, file_in, 'dz')
+    dz = ma.array(dz, mask=ctx.mask)
+    dz = np.reshape(dz, (nz, ny*nx)).transpose()
+    dz = np.reshape(dz, (ny, nx, nz))
+    dz = dz.compressed()
+    # scale, m to cm
+    dz = 100*dz
+    write_petsc_vector('forcing/domain/dz.petsc', dz)
 
 def prepare_geometry(ctx):
-    '''
-        `volumes.petsc`
-        `landSeaMask.petsc`
-    '''
-    pass
+    '''Prepare geometry files.'''
+    file_in = ctx.uvic_bgc_path + '/grid.mat'
+    lsm = read_from_mat_file(ctx, file_in, 'ideep')
+    lsm = spsp.csr_matrix(lsm)
+    write_petsc_matrix('geometry/landSeaMask.petsc', lsm)
 
-#    # geometry/landSeaMask.petsc
-#    lsm = spsp.csr_matrix(f['ideep'][...])
-#    writePETScMatrix('geometry/landSeaMask.petsc', lsm)
-
-#    # geometry/volumes.petsc
-#    vol = ma.array(f['dv'][...], mask=msk)
-#    vol = np.reshape(vol, (nz, ny*nx)).transpose()
-#    vol = np.reshape(vol, (ny, nx, nz))
-#    vol = vol.compressed()
-#    writePETScVector('geometry/volumes.petsc', vol)
-
+    nz, ny, nx = ctx.mask.shape
+    vol = read_from_mat_file(ctx, file_in, 'dv')
+    vol = ma.array(vol, mask=ctx.mask)
+    vol = np.reshape(vol, (nz, ny*nx)).transpose()
+    vol = np.reshape(vol, (ny, nx, nz))
+    vol = vol.compressed()
+    write_petsc_vector('geometry/volumes.petsc', vol)
 
 def prepare_ini(ctx):
-    pass
-
-## init/*ini.petsc
-#names = ['dic','c14','alk','o2','po4','phyt','zoop','detr','no3','diaz']
-#for name in names:
-#    filenamein = 'tmm_github/models/current/uvok1.0/matlab/InitialConditionProfiles/' + name + '.dat'
-#    # vec1d
-#    vec1d = np.loadtxt(filenamein)[:,1]
-#    # vec3d
-#    vec3d = np.zeros(msk.shape)
-#    vec3d[...] = vec1d[:, np.newaxis, np.newaxis]
-#    # mask, reshape
-#    vec = ma.array(vec3d, mask=msk)
-#    vec = np.reshape(vec, (nz, ny*nx)).transpose()
-#    vec = np.reshape(vec, (ny, nx, nz))
-#    vec = vec.compressed()
-#    # write
-#    filenameout = 'ini/' + name + 'ini.petsc'
-#    writePETScVector(filenameout, vec)
-
+    '''Prepare initial tracer concentrations.'''
+    names = ['dic','c14','alk','o2','po4','phyt','zoop','detr','no3','diaz']
+#    for name in names:
+#        filenamein = 'tmm_github/models/current/uvok1.0/matlab/InitialConditionProfiles/' + name + '.dat'
+#        # vec1d
+#        vec1d = np.loadtxt(filenamein)[:,1]
+#        # vec3d
+#        vec3d = np.zeros(msk.shape)
+#        vec3d[...] = vec1d[:, np.newaxis, np.newaxis]
+#        # mask, reshape
+#        vec = ma.array(vec3d, mask=msk)
+#        vec = np.reshape(vec, (nz, ny*nx)).transpose()
+#        vec = np.reshape(vec, (ny, nx, nz))
+#        vec = vec.compressed()
+#        # write
+#        filenameout = 'ini/' + name + 'ini.petsc'
+#        writePETScVector(filenameout, vec)
 
 def prepare_transport(ctx):
     pass
@@ -258,6 +259,7 @@ def prepare_uvok_data(ctx):
 
         We also prepared the TMM/UVIC/UVOK sources as described in `../README.md`.
         '''
+    # input directories
     ctx.tmm_path        = 'tmm'
     ctx.tmm_matlab_path = 'tmm_matlab_code'
     ctx.uvic_tmm_path   = 'UVic_Kiel_increase_isopyc_diff'
@@ -267,7 +269,7 @@ def prepare_uvok_data(ctx):
     file_path = ctx.uvic_bgc_path + '/grid.mat'
     f = open_mat(file_path)
     ctx.mask = (f['bathy'][...] != 1.)
-    
+
     # new_order, new_index
     file_path = ctx.uvic_tmm_path + '/Matrix1/Data/profile_data.mat'
     f = open_mat(file_path)
@@ -445,3 +447,43 @@ if __name__ == "__main__":
 #    print(key, type(uvok_input[key]))
 #    if isinstance(uvok_input[key], np.ndarray):
 #        print(uvok_input[key].shape)
+
+#    for i in range(12):
+#        var = ma.array(f[varname][:,:,i].transpose(), mask=ctx.mask[0,:,:])
+#        var = var.compressed()
+#        if apply_to_data:
+#            var = apply_to_data(var)
+#        writePETScVector('forcing/boundary/{}_{:02d}.petsc'.format(filename, i), var)
+#    aice = read_2d_list_from_mat_file(ctx, file_in, 'aice', 12)
+#    file_out = 'forcing/boundary/' + 'aice'
+#    write_petsc_vector_list(file_out, aice)
+
+
+#        if apply_to_data:
+#            var = apply_to_data(var)
+#        writePETScVector('forcing/domain/{}_{:02d}.petsc'.format(filename, i), var)
+
+#    prepare_forcing_domain(ctx, f, 'Fe', 'Fe_dissolved')
+
+#    f = open_mat(file_path)
+#    to_uvok_units = lambda s: (s - 35.0)/1000.0
+#    prepare_forcing_domain(ctx, f, 'Sgcm', 'Ss', apply_to_data=to_uvok_units)
+#    var_list = read_3d_list_from_mat_file(ctx, file_in, 'Tgcm', 12)
+#    file_path = ctx.uvic_bgc_path + '/GCM/Theta_gcm.mat'
+#    f = open_mat(file_path)
+#    prepare_forcing_domain(ctx, f, 'Tgcm', 'Ts')
+
+#    file_path = ctx.uvic_tmm_path + '/Matrix1/Data'
+#    f = open_mat(file_path)
+#    take_first_entries = lambda x:
+#    prepare_forcing_boundary(ctx, f, 'YBox', 'latitude')
+
+#    file_path = ctx.uvic_bgc_path + '/grid.mat'
+#    f = open_mat(file_path)
+#    # forcing/boundary/latitude.petsc
+#    y = f['y'][...].transpose()
+#    phi = np.zeros((ny, nx))
+#    phi[...] = y[:]
+#    phi = ma.array(phi, mask=msk[0,:,:])
+#    phi = phi.compressed()
+#    writePETScVector('forcing/boundary/latitude.petsc', phi)
