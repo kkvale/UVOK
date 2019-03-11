@@ -28,7 +28,7 @@ class Context():
     '''An empty class to gather and pass script data.'''
     pass
 
-###
+### -----------------------------------------------------------------------------------------------
 
 def open_mat(file_path):
     '''Open a Matlab file. Use scipy if mat-v5 or h5py if newer.'''
@@ -65,6 +65,25 @@ def writePETScMatrix(filename, mat):
 
 ### -----------------------------------------------------------------------------------------------
 
+def prepare_forcing_boundary(ctx, f, varname, filename, apply_to_data=None):
+    '''Prepare boundary (2d) data from given name.'''
+    for i in range(12):
+        var = ma.array(f[varname][:,:,i].transpose(), mask=ctx.mask[0,:,:])
+        var = var.compressed()
+        if apply_to_data:
+            var = apply_to_data(var)
+        writePETScVector('forcing/boundary/{}_{:02d}.petsc'.format(filename, i), var)
+
+def prepare_forcing_domain(ctx, f, varname, filename, apply_to_data=None):
+    '''Prepare boundary (2d) data from given name.'''
+    for i in range(12):
+        var = ma.array(f[varname][:,:,:,i].transpose(), mask=ctx.mask)
+        var = var.compressed()
+        var = var[ctx.new_index]
+        if apply_to_data:
+            var = apply_to_data(var)
+        writePETScVector('forcing/domain/{}_{:02d}.petsc'.format(filename, i), var)
+
 def prepare_forcing(ctx):
 #    ctx.tmm_path        = 'tmm'
 #    ctx.tmm_matlab_path = 'tmm_matlab_code'
@@ -72,134 +91,56 @@ def prepare_forcing(ctx):
 #    ctx.uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
     pass
     # prepare boundary
+#    file_path = ctx.uvic_tmm_path + '/Matrix1/Data'
+#    f = open_mat(file_path)
+#    take_first_entries = lambda x:
+#    prepare_forcing_boundary(ctx, f, 'YBox', 'latitude')
+
+    #    file_path = ctx.uvic_bgc_path + '/grid.mat'
+    #    f = open_mat(file_path)
+    #    # forcing/boundary/latitude.petsc
+    #    y = f['y'][...].transpose()
+    #    phi = np.zeros((ny, nx))
+    #    phi[...] = y[:]
+    #    phi = ma.array(phi, mask=msk[0,:,:])
+    #    phi = phi.compressed()
+    #    writePETScVector('forcing/boundary/latitude.petsc', phi)
+
     file_path = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
     f = open_mat(file_path)
-    for i in range(12):
-        var = ma.array(f['aice'][:,:,i].transpose(), mask=ctx.mask[0,:,:])
-        var = var.compressed()
-        writePETScVector('forcing/boundary/aice_{:02d}.petsc'.format(i), var)
+    prepare_forcing_boundary(ctx, f, 'aice', 'aice')
+    prepare_forcing_boundary(ctx, f, 'hice', 'hice')
+    prepare_forcing_boundary(ctx, f, 'hsno', 'hsno')
+    prepare_forcing_boundary(ctx, f, 'wind', 'wind')
+    prepare_forcing_boundary(ctx, f, 'swrad', 'swrad')
 
+    # prepare domain
+    prepare_forcing_domain(ctx, f, 'Fe', 'Fe_dissolved')
 
+    file_path = ctx.uvic_bgc_path + '/GCM/Salt_gcm.mat'
+    f = open_mat(file_path)
+    to_uvok_units = lambda s: (s - 35.0)/1000.0
+    prepare_forcing_domain(ctx, f, 'Sgcm', 'Ss', apply_to_data=to_uvok_units)
 
-    
-    
-#    file_path = ctx.uvic_bgc_path + '/grid.mat'
-#    f = open_mat(file_path)
+    file_path = ctx.uvic_bgc_path + '/GCM/Theta_gcm.mat'
+    f = open_mat(file_path)
+    prepare_forcing_domain(ctx, f, 'Tgcm', 'Ts')
+
 ## grid.mat
 ## file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
 ## Hierarchical Data Format (version 5) with 512 bytes user block
 #with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
-#    # forcing/boundary/latitude.petsc
-#    y = f['y'][...].transpose()
-#    phi = np.zeros((ny, nx))
-#    phi[...] = y[:]
-#    phi = ma.array(phi, mask=msk[0,:,:])
-#    phi = phi.compressed()
-#    writePETScVector('forcing/boundary/latitude.petsc', phi)
-
-#    file_path = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
-#    f = open_mat(file_path)
-##    Fe = ma.array(f['Fe'][:,:,:,0], mask=ctx.mask.transpose())
-#    Fe = ma.array(f['Fe'][:,:,:,0].transpose(), mask=ctx.mask)
-#    print(Fe.shape)
-#    print(Fe.flags)
-#
-##    Fe = Fe.transpose()
-#    Fe = Fe.compressed()
-#    print(ctx.new_index)
-#
-#    Fe = Fe[ctx.new_index]
-#    writePETScVector('forcing/domain/Fe.petsc', Fe)
-
-
-#    print(f['aice'][...].shape)
-#    print(f['aice'][...].flags)
-#    print(f['aice'][...].transpose().shape)
-#    print(f['aice'][...].transpose().flags)
-#    print(ctx.mask.shape)
-#    print(np.ascontiguousarray(f['aice'][...]).shape)
-#    aice = f['aice']
-#    print(f['aice'][0,:,0])
-#    print(aice[0,:,0])
-#    aice = ma.zeros(ctx.mask.shape, mask=ctx.mask)
-#    aice[0,:,:] = f['aice'][:,:,0].transpose()
-#    aice = ma.array(f['aice'][:,:,0].transpose(), mask=ctx.mask[0,:,:])
-#    print(aice.shape)
-#    print(aice.flags)
-#    print(aice[4,:])
-#    print(aice[5,:])
-#    print(aice[6,:])
-#    aice = ma.array(f['aice'][...].transpose()[0,:,:], mask=ctx.mask[0,:,:].transpose())
-#    aice = ma.array(f['aice'][:,:,0], mask=ctx.mask[0,:,:].transpose())
-#    aice = aice.transpose()
-#    aice = aice.compressed()
-#    print(aice.shape)
-#    print(ctx.new_index.shape)
-
-
-#    print(aice.shape)
-#    print(aice[:100])
-#    aice = aice[order]
-#    print(aice[:100])
-
-
-#with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat') as f:
-#    Ir_pre = np.array(f['Ir_pre'], dtype='i4') - 1
-##    print(f['Ir_pre'][...].shape)
-##    print(Ir_pre.shape)
-#
-
-#    writePETScVector('forcing/boundary/aice.petsc', aice)
-
-#    import matplotlib
-#    matplotlib.use("TkAgg")
-#    import matplotlib.pyplot as plt
-#
-#    plt.imshow(f['aice'][:,:,0])
-#    plt.savefig('aice.png')
-#
-#    plt.imshow(aice[:,:])
-#    plt.savefig('aice2.png')
-
-#    plt.spy(ctx.mask[0,:,:].transpose())
-#    plt.savefig('mask.png')
+#    # forcing/domain/dz.petsc
+#    dz = ma.array(f['dz'][...], mask=msk)
+#    dz = np.reshape(dz, (nz, ny*nx)).transpose()
+#    dz = np.reshape(dz, (ny, nx, nz))
+#    dz = dz.compressed()
+#    # scale, m to cm
+#    dz = 100*dz
+#    writePETScVector('forcing/domain/dz.petsc', dz)
 
 
 
-
-
-#    print(f.keys())
-#    print(f['aice'][...].shape)
-
-#    file_path = ctx.uvic_tmm_path + '/Matrix1/Data/boxes.mat'
-#    f = open_mat(file_path)
-#    print(f.keys())
-#    print(f['nb'][...])
-
-#print(spio.whosmat(file_path))
-#print(file_path)
-#f = open(file_path)
-#f.close()
-#with h5.File(file_path) as f:
-#with h5.File('UVic_Kiel_increase_isopyc_diff_model_data/BiogeochemData/UVOK_input_data.mat') as f:
-#    print(f.keys())
-
-#file_path = uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
-#uvok_input = spio.loadmat(file_path)
-##print(uvok_input.keys())
-##dict_keys(['__header__', '__version__', '__globals__', 'Fe', 'aice', 'hice', 'hsno', 'swrad', 'wind'])
-#
-#for key in uvok_input.keys():
-#    print(key, type(uvok_input[key]))
-#    if isinstance(uvok_input[key], np.ndarray):
-#        print(uvok_input[key].shape)
-
-#load(uvokInputDataFile,'aice')
-#load(uvokInputDataFile,'hice')
-#load(uvokInputDataFile,'hsno')
-#load(uvokInputDataFile,'wind')
-#load(uvokInputDataFile,'Fe')
-#load(uvokInputDataFile,'swrad')
 
 
 def prepare_geometry(ctx):
@@ -208,6 +149,18 @@ def prepare_geometry(ctx):
         `landSeaMask.petsc`
     '''
     pass
+
+#    # geometry/landSeaMask.petsc
+#    lsm = spsp.csr_matrix(f['ideep'][...])
+#    writePETScMatrix('geometry/landSeaMask.petsc', lsm)
+
+#    # geometry/volumes.petsc
+#    vol = ma.array(f['dv'][...], mask=msk)
+#    vol = np.reshape(vol, (nz, ny*nx)).transpose()
+#    vol = np.reshape(vol, (ny, nx, nz))
+#    vol = vol.compressed()
+#    writePETScVector('geometry/volumes.petsc', vol)
+
 
 def prepare_ini(ctx):
     pass
@@ -315,12 +268,10 @@ def prepare_uvok_data(ctx):
     f = open_mat(file_path)
     ctx.mask = (f['bathy'][...] != 1.)
     
-    # new_order
+    # new_order, new_index
     file_path = ctx.uvic_tmm_path + '/Matrix1/Data/profile_data.mat'
     f = open_mat(file_path)
     ctx.new_order = np.array(f['Irr'][0,:] - 1, dtype='i4')
-
-    # new_index
     ctx.new_index = np.array(f['Ir_pre'][0,:] - 1, dtype='i4')
 
     prepare_forcing(ctx)
@@ -334,31 +285,6 @@ if __name__ == "__main__":
 
 
 
-
-
-#    # geometry/landSeaMask.petsc
-#    lsm = spsp.csr_matrix(f['ideep'][...])
-#    writePETScMatrix('geometry/landSeaMask.petsc', lsm)
-
-#    # geometry/volumes.petsc
-#    vol = ma.array(f['dv'][...], mask=msk)
-#    vol = np.reshape(vol, (nz, ny*nx)).transpose()
-#    vol = np.reshape(vol, (ny, nx, nz))
-#    vol = vol.compressed()
-#    writePETScVector('geometry/volumes.petsc', vol)
-
-## grid.mat
-## file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
-## Hierarchical Data Format (version 5) with 512 bytes user block
-#with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
-#    # forcing/domain/dz.petsc
-#    dz = ma.array(f['dz'][...], mask=msk)
-#    dz = np.reshape(dz, (nz, ny*nx)).transpose()
-#    dz = np.reshape(dz, (ny, nx, nz))
-#    dz = dz.compressed()
-#    # scale, m to cm
-#    dz = 100*dz
-#    writePETScVector('forcing/domain/dz.petsc', dz)
 
 
 
@@ -446,3 +372,76 @@ if __name__ == "__main__":
 ##    print(f['deltaT'][...])
 #    ## file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
 #    nz, ny, nx = msk.shape
+
+
+
+#    print(f['aice'][...].shape)
+#    print(f['aice'][...].flags)
+#    print(f['aice'][...].transpose().shape)
+#    print(f['aice'][...].transpose().flags)
+#    print(ctx.mask.shape)
+#    print(np.ascontiguousarray(f['aice'][...]).shape)
+#    aice = f['aice']
+#    print(f['aice'][0,:,0])
+#    print(aice[0,:,0])
+#    aice = ma.zeros(ctx.mask.shape, mask=ctx.mask)
+#    aice[0,:,:] = f['aice'][:,:,0].transpose()
+#    aice = ma.array(f['aice'][:,:,0].transpose(), mask=ctx.mask[0,:,:])
+#    print(aice.shape)
+#    print(aice.flags)
+#    print(aice[4,:])
+#    print(aice[5,:])
+#    print(aice[6,:])
+#    aice = ma.array(f['aice'][...].transpose()[0,:,:], mask=ctx.mask[0,:,:].transpose())
+#    aice = ma.array(f['aice'][:,:,0], mask=ctx.mask[0,:,:].transpose())
+#    aice = aice.transpose()
+#    aice = aice.compressed()
+#    print(aice.shape)
+#    print(ctx.new_index.shape)
+
+
+#    print(aice.shape)
+#    print(aice[:100])
+#    aice = aice[order]
+#    print(aice[:100])
+
+
+#with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat') as f:
+#    Ir_pre = np.array(f['Ir_pre'], dtype='i4') - 1
+##    print(f['Ir_pre'][...].shape)
+##    print(Ir_pre.shape)
+#
+
+#    writePETScVector('forcing/boundary/aice.petsc', aice)
+
+#    import matplotlib
+#    matplotlib.use("TkAgg")
+#    import matplotlib.pyplot as plt
+#
+#    plt.imshow(f['aice'][:,:,0])
+#    plt.savefig('aice.png')
+#
+#    plt.imshow(aice[:,:])
+#    plt.savefig('aice2.png')
+
+#    plt.spy(ctx.mask[0,:,:].transpose())
+#    plt.savefig('mask.png')
+
+
+#print(spio.whosmat(file_path))
+#print(file_path)
+#f = open(file_path)
+#f.close()
+#with h5.File(file_path) as f:
+#with h5.File('UVic_Kiel_increase_isopyc_diff_model_data/BiogeochemData/UVOK_input_data.mat') as f:
+#    print(f.keys())
+
+#file_path = uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
+#uvok_input = spio.loadmat(file_path)
+##print(uvok_input.keys())
+##dict_keys(['__header__', '__version__', '__globals__', 'Fe', 'aice', 'hice', 'hsno', 'swrad', 'wind'])
+#
+#for key in uvok_input.keys():
+#    print(key, type(uvok_input[key]))
+#    if isinstance(uvok_input[key], np.ndarray):
+#        print(uvok_input[key].shape)
