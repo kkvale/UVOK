@@ -24,8 +24,25 @@ import numpy.ma as ma
 
 ### -----------------------------------------------------------------------------------------------
 
+class Context():
+    '''An empty class to gather and pass script data.'''
+    pass
+
+###
+
+def open_mat(file_path):
+    '''Open a Matlab file. Use scipy if mat-v5 or h5py if newer.'''
+    try:
+        f = spio.loadmat(file_path)
+        return f
+    except:
+        f = h5.File(file_path)
+        return f
+
+### -----------------------------------------------------------------------------------------------
+
 def writePETScVector(filename, vec):
-    '''Write a numpy 1d array to file in PETSc vector format.'''
+    '''Write a numpy 1d array into a file in PETSc vector format.'''
     with open(filename, 'wb') as f:
         # vec id, nvec, data
         nvec, = vec.shape
@@ -33,7 +50,7 @@ def writePETScVector(filename, vec):
         np.array(vec, dtype='>f8').tofile(f)
 
 def writePETScMatrix(filename, mat):
-    '''Write a scipy sparse matrix to file in PETSc sparse format.'''
+    '''Write a scipy sparse matrix into a file in PETSc sparse format.'''
     with open(filename, 'wb') as f:
         # mat id, nrow, ncol, nnz
         nrow, ncol = mat.shape
@@ -46,8 +63,101 @@ def writePETScMatrix(filename, mat):
 
 ### -----------------------------------------------------------------------------------------------
 
-def prepare_forcing():
+def prepare_forcing(ctx):
+#    ctx.tmm_path        = 'tmm'
+#    ctx.tmm_matlab_path = 'tmm_matlab_code'
+#    ctx.uvic_tmm_path   = 'UVic_Kiel_increase_isopyc_diff'
+#    ctx.uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
     pass
+    # prepare boundary
+#    file_path = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
+#    f = open_mat(file_path)
+##    f['aice']
+
+#    file_path = ctx.uvic_bgc_path + '/grid.mat'
+#    f = open_mat(file_path)
+## grid.mat
+## file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
+## Hierarchical Data Format (version 5) with 512 bytes user block
+#with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
+#    # forcing/boundary/latitude.petsc
+#    y = f['y'][...].transpose()
+#    phi = np.zeros((ny, nx))
+#    phi[...] = y[:]
+#    phi = ma.array(phi, mask=msk[0,:,:])
+#    phi = phi.compressed()
+#    writePETScVector('forcing/boundary/latitude.petsc', phi)
+
+    file_path = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
+    f = open_mat(file_path)
+    Fe = ma.array(f['Fe'][:,:,:,0], mask=ctx.mask.transpose())
+    print(Fe.shape)
+    print(Fe.flags)
+    
+    Fe = Fe.transpose()
+    Fe = Fe.compressed()
+    print(ctx.new_index)
+    
+    Fe = Fe[ctx.new_index]
+    writePETScVector('forcing/domain/Fe.petsc', Fe)
+
+
+#    print(f['aice'][...].shape)
+#    print(f['aice'][...].flags)
+#    print(f['aice'][...].transpose().shape)
+#    print(f['aice'][...].transpose().flags)
+#    print(ctx.mask.shape)
+#    print(np.ascontiguousarray(f['aice'][...]).shape)
+#    aice = f['aice']
+#    print(f['aice'][0,:,0])
+#    print(aice[0,:,0])
+#    aice = ma.zeros(ctx.mask.shape, mask=ctx.mask)
+#    aice[0,:,:] = f['aice'][:,:,0].transpose()
+#    aice = ma.array(f['aice'][:,:,0], mask=ctx.mask[0,:,:])
+#    aice = ma.array(f['aice'][...].transpose()[0,:,:], mask=ctx.mask[0,:,:].transpose())
+#    aice = ma.array(f['aice'][:,:,0], mask=ctx.mask[0,:,:].transpose())
+#    aice = aice.transpose()
+#    aice = aice.compressed()
+
+#    print(aice.shape)
+#    print(aice[:100])
+#    aice = aice[order]
+#    print(aice[:100])
+
+
+#with h5.File('UVic_Kiel_increase_isopyc_diff/Matrix1/Data/profile_data.mat') as f:
+#    Ir_pre = np.array(f['Ir_pre'], dtype='i4') - 1
+##    print(f['Ir_pre'][...].shape)
+##    print(Ir_pre.shape)
+#
+
+#    writePETScVector('forcing/boundary/aice.petsc', aice)
+
+#    import matplotlib
+#    matplotlib.use("TkAgg")
+#    import matplotlib.pyplot as plt
+#
+#    plt.imshow(f['aice'][:,:,0])
+#    plt.savefig('aice.png')
+#
+#    plt.imshow(aice[:,:])
+#    plt.savefig('aice2.png')
+
+#    plt.spy(ctx.mask[0,:,:].transpose())
+#    plt.savefig('mask.png')
+
+
+
+
+
+#    print(f.keys())
+#    print(f['aice'][...].shape)
+
+#    file_path = ctx.uvic_tmm_path + '/Matrix1/Data/boxes.mat'
+#    f = open_mat(file_path)
+#    print(f.keys())
+#    print(f['nb'][...])
+
 #print(spio.whosmat(file_path))
 #print(file_path)
 #f = open(file_path)
@@ -74,14 +184,14 @@ def prepare_forcing():
 #load(uvokInputDataFile,'swrad')
 
 
-def prepare_geometry():
+def prepare_geometry(ctx):
     '''
         `volumes.petsc`
         `landSeaMask.petsc`
     '''
     pass
 
-def prepare_ini():
+def prepare_ini(ctx):
     pass
 
 ## init/*ini.petsc
@@ -103,7 +213,7 @@ def prepare_ini():
 #    writePETScVector(filenameout, vec)
 
 
-def prepare_transport():
+def prepare_transport(ctx):
     pass
 
 ## Ae_00
@@ -162,7 +272,7 @@ def prepare_transport():
 
 
 
-def prepare_uvok_data():
+def prepare_uvok_data(ctx):
     '''
         This routine prepares the required data for UVOK simulation.
         Assume we are located in data/ and have the following directory structure:
@@ -177,32 +287,36 @@ def prepare_uvok_data():
 
         We also prepared the TMM/UVIC/UVOK sources as described in `../README.md`.
         '''
-    tmm_path        = 'tmm'
-    tmm_matlab_path = 'tmm_matlab_code'
-    uvic_tmm_path   = 'UVic_Kiel_increase_isopyc_diff'
-    uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
+    ctx.tmm_path        = 'tmm'
+    ctx.tmm_matlab_path = 'tmm_matlab_code'
+    ctx.uvic_tmm_path   = 'UVic_Kiel_increase_isopyc_diff'
+    ctx.uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
 
-    prepare_forcing()
-    prepare_geometry()
-    prepare_ini()
-    prepare_transport()
+    # mask
+    file_path = ctx.uvic_bgc_path + '/grid.mat'
+    f = open_mat(file_path)
+    ctx.mask = (f['bathy'][...] != 1.)
+    
+    # new_order
+    file_path = ctx.uvic_tmm_path + '/Matrix1/Data/profile_data.mat'
+    f = open_mat(file_path)
+    ctx.new_order = np.array(f['Irr'][0,:] - 1, dtype='i4')
+
+    # new_index
+    ctx.new_index = np.array(f['Ir_pre'][0,:] - 1, dtype='i4')
+
+    prepare_forcing(ctx)
+    prepare_geometry(ctx)
+    prepare_ini(ctx)
+    prepare_transport(ctx)
 
 if __name__ == "__main__":
-    prepare_uvok_data()
+    ctx = Context()
+    prepare_uvok_data(ctx)
 
 
 
-## grid.mat
-## file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
-## Hierarchical Data Format (version 5) with 512 bytes user block
-#with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
-#
-##    print(f.keys())
-##    print(f['deltaT'][...])
-#
-#    # mask
-#    msk = (f['bathy'][...] != 1.)
-#    nz, ny, nx = msk.shape
+
 
 #    # geometry/landSeaMask.petsc
 #    lsm = spsp.csr_matrix(f['ideep'][...])
@@ -215,6 +329,10 @@ if __name__ == "__main__":
 #    vol = vol.compressed()
 #    writePETScVector('geometry/volumes.petsc', vol)
 
+## grid.mat
+## file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
+## Hierarchical Data Format (version 5) with 512 bytes user block
+#with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
 #    # forcing/domain/dz.petsc
 #    dz = ma.array(f['dz'][...], mask=msk)
 #    dz = np.reshape(dz, (nz, ny*nx)).transpose()
@@ -224,13 +342,6 @@ if __name__ == "__main__":
 #    dz = 100*dz
 #    writePETScVector('forcing/domain/dz.petsc', dz)
 
-#    # forcing/boundary/latitude.petsc
-#    y = f['y'][...].transpose()
-#    phi = np.zeros((ny, nx))
-#    phi[...] = y[:]
-#    phi = ma.array(phi, mask=msk[0,:,:])
-#    phi = phi.compressed()
-#    writePETScVector('forcing/boundary/latitude.petsc', phi)
 
 
 
@@ -307,3 +418,13 @@ if __name__ == "__main__":
 #plt.clf()
 #plt.spy(Ae_00[:n,:n])
 #plt.savefig('Ae_00.png')
+
+## grid.mat
+## file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
+## Hierarchical Data Format (version 5) with 512 bytes user block
+#with h5.File('./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat') as f:
+#
+##    print(f.keys())
+##    print(f['deltaT'][...])
+#    ## file ./UVic_Kiel_increase_isopyc_diff_model_data/grid.mat
+#    nz, ny, nx = msk.shape
