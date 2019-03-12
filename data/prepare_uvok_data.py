@@ -169,6 +169,12 @@ def prepare_forcing(ctx):
     dz = reshape_and_compress(ctx, dz)
     dz = 100*dz
     write_petsc_vector('forcing/domain/dz.petsc', dz)
+    # zt
+    file_in = ctx.uvic_tmm_path + '/Matrix1/Data/boxes.mat'
+    zt = read_from_mat_file(ctx, file_in, 'Zbox')
+    zt = zt[0,ctx.new_index]
+    zt = 100*zt
+    write_petsc_vector('forcing/domain/zt.petsc', zt)
 
 def prepare_geometry(ctx):
     '''Prepare geometry files.'''

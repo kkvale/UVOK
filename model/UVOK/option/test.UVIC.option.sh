@@ -56,15 +56,15 @@
 #-Metos3DIceCoverFileFormat                          fice_$02d.petsc
 
 # bgc domain conditions
--Metos3DDomainConditionCount                        0
-#-Metos3DDomainConditionInputDirectory               data/TMM/2.8/Forcing/DomainCondition/
-#-Metos3DDomainConditionName                         LayerDepth,LayerHeight
-# layer depth
-#-Metos3DLayerDepthCount                             1
-#-Metos3DLayerDepthFileFormat                        z.petsc
+-Metos3DDomainConditionCount                        2
+-Metos3DDomainConditionInputDirectory               data/forcing/domain/
+-Metos3DDomainConditionName                         LayerMid,LayerHeight
+# layer mid
+-Metos3DLayerMidCount                               1
+-Metos3DLayerMidFileFormat                          zt.petsc
 # layer height
-#-Metos3DLayerHeightCount                            1
-#-Metos3DLayerHeightFileFormat                       dz.petsc
+-Metos3DLayerHeightCount                            1
+-Metos3DLayerHeightFileFormat                       dz.petsc
 
 # transport
 -Metos3DTransportType                               Matrix

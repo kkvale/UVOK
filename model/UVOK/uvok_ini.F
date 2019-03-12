@@ -32,7 +32,15 @@
 	  print*,'ERROR: you must define O_co2ccn_user in UVOK_TMM_OPTIONS.h'
 	  stop
 #endif
-      
+
+      print *, nzmax
+      print *, z
+      print *, drF
+      print *, DeltaT
+      print *, S_surf_glob
+      print *, TR_surf_glob
+      print *, debugFlag
+
 ! set some constants
       pi = 4.0 * atan(1.0)
       radian = 360./(2.*pi)
@@ -41,10 +49,10 @@
       socn = 0.03475
 Csetmom.F:        socn = gaost(isalt)
 
-	  if (nzmax.ne.km) then
-		print*,'ERROR in UVOK_INI: number of depth levels incorrect!'
-		stop
-	  endif  
+!      if (nzmax.ne.km) then
+!        print*,'ERROR in UVOK_INI: number of depth levels incorrect!'
+!        stop
+!      endif
 
       kmt(1,1) = nzmax ! this will be set to the local value in uvok_calc
 
