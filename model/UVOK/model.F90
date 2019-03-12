@@ -25,6 +25,9 @@ subroutine metos3dbgcinit(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     integer :: ny, nx, nu, nb, nd, ndiag
     real(8) :: dt, q(nx, ny), t, y(nx, ny), u(nu), b(nb), d(nx, nd), diag(nx, ndiag)
 
+
+
+!    print *,
 !    call uvok_ini(nx, )
 
 !SUBROUTINE UVOK_INI(
@@ -117,3 +120,65 @@ subroutine metos3dbgcfinal(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag
     real*8  :: dt, q(nx, ny), t, y(nx, ny), u(nu), b(nb), d(nx, nd), diag(nx, ndiag)
 end subroutine
 
+
+
+! ------------------------------------------------------------------------------------------
+! (un)used subroutine stubs
+! ------------------------------------------------------------------------------------------
+
+subroutine areaavg (data, dmsk, avg)
+!    implicit none
+end
+
+subroutine setbcx (a, imt, jmtorkm)
+!    implicit none
+!    dimension a(imt,jmtorkm)
+end
+
+subroutine data (is, ie, js, je)
+!    implicit none
+!    integer is, ie, js, je
+end
+
+subroutine co2forc
+!    implicit none
+end
+
+subroutine c14data
+!    implicit none
+end
+
+subroutine co2ccndata
+!    implicit none
+end
+
+subroutine defvar (name, ncid, nd, id, rmin, rmax, axis, type, lname, sname, units)
+!    implicit none
+!    character(*) name, axis, lname, sname, type, units
+!    integer nd, id(nd), ncid
+!    real rmax, rmin
+end
+
+subroutine putvaramsk (name, ncid, ln, is, ic, din, dm, s, o)
+!    implicit none
+!    character(*) name
+!    integer ic(10), is(10), ln, ncid
+!    real din(ln)
+!    real dm(ln), o, s
+end
+
+subroutine getunit (iounit, oldfilename, optionlist)
+    implicit none
+    integer iounit
+    character(*) :: oldfilename, optionlist
+    iounit = 1
+end
+
+subroutine relunit (iounit)
+end
+
+character(120) function new_file_name(filename)
+    implicit none
+    character(*) filename
+    new_file_name = filename
+end

@@ -186,7 +186,7 @@ def prepare_ini(ctx):
     '''Prepare initial tracer concentrations.'''
     names = ['dic','c14','alk','o2','po4','phyt','zoop','detr','no3','diaz']
     for name in names:
-        file_in = ctx.tmm_path + '/models/current/uvok1.0/matlab/InitialConditionProfiles/' + name + '.dat'
+        file_in = ctx.uvok_path + '/matlab/InitialConditionProfiles/' + name + '.dat'
         vec1d = np.loadtxt(file_in)[:,1]
         vec3d = np.zeros(ctx.mask.shape)
         vec3d[...] = vec1d[:, np.newaxis, np.newaxis]
@@ -229,7 +229,8 @@ def prepare_uvok_data(ctx):
         We also prepared the TMM/UVIC/UVOK sources as described in `../README.md`.
         '''
     # input directories
-    ctx.tmm_path        = 'tmm'
+    ctx.uvok_path       = 'tmm/models/current/uvok1.0'
+#    ctx.tmm_path        = 'tmm'
 #    ctx.tmm_matlab_path = 'tmm_matlab_code'
     ctx.uvic_tmm_path   = 'UVic_Kiel_increase_isopyc_diff'
     ctx.uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
@@ -290,5 +291,7 @@ if __name__ == "__main__":
 #plt.clf()
 #plt.spy(ctx.mask[0,:,:].transpose())
 #plt.savefig('mask.png')
+
+
 
 
