@@ -23,30 +23,46 @@ check_files()
   done
 }
 
-diff_files()
+diff_files_petsc()
 {
+# files have same endings
   for i in `$1`
   do
-    echo "Checking ... $i"
-    diff $i ${i/ini/from_spk}
+    j="from_spk/"$(basename $i)
+    echo "Checking ... $i $j"
+    diff $i $j
   done
 }
 
-#check_files_crop forcing/boundary/ aice
-#check_files_crop forcing/boundary/ hice
-#check_files_crop forcing/boundary/ hsno
-#check_files_crop forcing/boundary/ wind
-#check_files_crop forcing/boundary/ swrad
-#
-#check_files forcing/domain/ Fe_dissolved
-#check_files forcing/domain/ Ss
-#check_files forcing/domain/ Ts
-#
-#echo "Checking ... latitude.petsc"
-#dd if=forcing/boundary/latitude.petsc bs=1 skip=8 2> /dev/null | diff - from_spk/latitude.bin
-#echo "Checking ... dz.petsc"
-#diff forcing/domain/dz.petsc from_spk/dz.petsc
-#
-#diff_files 'ls ini/*ini.petsc'
+diff_files()
+{
+  # spk files do not have petsc ending
+  for i in `$1`
+  do
+    j="from_spk/"$(basename $i)
+    k=${j/.petsc/}
+    echo "Checking ... $i $k"
+    diff $i $k
+  done
+}
+
+check_files_crop forcing/boundary/ aice
+check_files_crop forcing/boundary/ hice
+check_files_crop forcing/boundary/ hsno
+check_files_crop forcing/boundary/ wind
+check_files_crop forcing/boundary/ swrad
+
+check_files forcing/domain/ Fe_dissolved
+check_files forcing/domain/ Ss
+check_files forcing/domain/ Ts
+
+echo "Checking ... latitude.petsc"
+dd if=forcing/boundary/latitude.petsc bs=1 skip=8 2> /dev/null | diff - from_spk/latitude.bin
+
+diff_files_petsc 'ls forcing/domain/dz.petsc'
+diff_files_petsc 'ls ini/*ini.petsc'
+
+diff_files 'ls transport/Ae_*.petsc'
+diff_files 'ls transport/Ai_*.petsc'
 
 
