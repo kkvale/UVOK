@@ -45,26 +45,47 @@
 #-Metos3DParameterValue                              
 
 # bgc boudary conditions
--Metos3DBoundaryConditionCount                      0
-#-Metos3DBoundaryConditionInputDirectory             data/forcing/boundary/
-#-Metos3DBoundaryConditionName                       Latitude,IceCover
+-Metos3DBoundaryConditionCount                      6
+-Metos3DBoundaryConditionInputDirectory             data/forcing/boundary/
+-Metos3DBoundaryConditionName                       Latitude,Wind,SWRAD,IceArea,IceHeight,SnowHeight
 # latitude
-# ice cover
-#-Metos3DLatitudeCount                               1
-#-Metos3DLatitudeFileFormat                          latitude.petsc
-#-Metos3DIceCoverCount                               12
-#-Metos3DIceCoverFileFormat                          fice_$02d.petsc
+# wind
+# short wave radiation
+# ice area
+# ice height
+# snow height
+-Metos3DLatitudeCount                               1
+-Metos3DLatitudeFileFormat                          latitude.petsc
+-Metos3DWindCount                                   12
+-Metos3DWindFileFormat                              wind_$02d.petsc
+-Metos3DSWRADCount                                  12
+-Metos3DSWRADFileFormat                             swrad_$02d.petsc
+-Metos3DIceAreaCount                                12
+-Metos3DIceAreaFileFormat                           aice_$02d.petsc
+-Metos3DIceHeightCount                              12
+-Metos3DIceHeightFileFormat                         hice_$02d.petsc
+-Metos3DSnowHeightCount                             12
+-Metos3DSnowHeightFileFormat                        hsno_$02d.petsc
 
 # bgc domain conditions
--Metos3DDomainConditionCount                        2
+-Metos3DDomainConditionCount                        5
 -Metos3DDomainConditionInputDirectory               data/forcing/domain/
--Metos3DDomainConditionName                         LayerWithin,LayerHeight
-# point within layer
--Metos3DLayerWithinCount                            1
--Metos3DLayerWithinFileFormat                       zt.petsc
+-Metos3DDomainConditionName                         WithinLayer,LayerHeight,Temperature,Salinity,FeDiss
+# points within layer
 # layer height
+# temperature
+# salinity
+# dissolved iron
+-Metos3DWithinLayerCount                            1
+-Metos3DWithinLayerFileFormat                       zt.petsc
 -Metos3DLayerHeightCount                            1
 -Metos3DLayerHeightFileFormat                       dz.petsc
+-Metos3DTemperatureCount                            12
+-Metos3DTemperatureFileFormat                       Ts_$02d.petsc
+-Metos3DSalinityCount                               12
+-Metos3DSalinityFileFormat                          Ss_$02d.petsc
+-Metos3DFeDissCount                                 12
+-Metos3DFeDissFileFormat                            Fe_dissolved_$02d.petsc
 
 # transport
 -Metos3DTransportType                               Matrix
@@ -96,4 +117,5 @@
 #-Metos3DNewton_ksp_type                             gmres
 #-Metos3DNewton_ksp_monitor
 #-Metos3DNewton_ksp_view
+
 

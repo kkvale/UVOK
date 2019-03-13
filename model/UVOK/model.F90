@@ -27,14 +27,8 @@ subroutine metos3dbgcinit(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
 
     real(8) :: salt_avg = -3.451231022787175e-004
     real(8) :: trace_avg(10) = (/ 2.315e0, 2.3140740e-012, 2.429e0, 0.1692e0, 0.543e0, 0.14e0, 1.4e-002, 1.0e-004, 5.3e0, 1.4e-002 /)
-!    real(8) :: salt_avg = -3.451231022787175d-004
-!    real(8) :: trace_avg(10) = (/ 2.315d0, 2.3140740d-012, 2.429d0, 0.1692d0, 0.543d0, 0.14d0, 1.4d-002, 1.0d-004, 5.3d0, 1.4d-002/)
-    real(8) :: zt(nx), z(nx)
-    real(8) :: dtbgc
-    integer :: debug
-
-    dtbgc = 28800.0d0
-    debug = 1
+    real(8) :: dtbgc = 28800.0d0
+    integer :: debug = 1
 
     ! nzmax             nx
     ! z                 d(:,1)
@@ -66,27 +60,36 @@ subroutine metos3dbgc(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     integer :: ny, nx, nu, nb, nd, ndiag
     real(8) :: dt, q(nx, ny), t, y(nx, ny), u(nu), b(nb), d(nx, nd), diag(nx, ndiag)
 
+    real(8) :: trace_avg(10) = (/ 2.315e0, 2.3140740e-012, 2.429e0, 0.1692e0, 0.543e0, 0.14e0, 1.4e-002, 1.0e-004, 5.3e0, 1.4e-002 /)
+    integer :: debug = 1
+    real(8) :: emp_glob = 0.d0
+    real(8) :: gasexfluxloc = 0.d0
+    real(8) :: totfluxloc = 0.d0
+    real(8) :: day_loc
+
+    day_loc = ...
+
     ! kmt_loc               nx
-    ! tlat_loc
+    ! tlat_loc              b(1)
     ! day_loc
-    ! relyr_loc
-    ! TEMP
-    ! SALT
-    ! TR_surf_glob
-    ! dz_loc
-    ! z
-    ! winds_loc
-    ! fe_dissolved_loc
-    ! swr_loc
-    ! aice_loc
-    ! hice_loc
-    ! hsno_loc
+    ! relyr_loc             t
+    ! TEMP                  d(:,3)
+    ! SALT                  d(:,4)
+    ! TR_surf_glob          trace_avg
+    ! dz_loc                d(:,2)
+    ! z                     d(:,1)
+    ! winds_loc             b(2)
+    ! fe_dissolved_loc      d(:,5)
+    ! swr_loc               b(3)
+    ! aice_loc              b(4)
+    ! hice_loc              b(5)
+    ! hsno_loc              b(6)
     ! emp_loc
-    ! emp_glob
-    ! gasexfluxloc
-    ! totfluxloc
-    ! debugFlag
-    call uvok_calc(nx, )
+    ! emp_glob              emp_glob
+    ! gasexfluxloc          gasexfluxloc
+    ! totfluxloc            totfluxloc
+    ! debugFlag             debug
+    call uvok_calc(nx, b(1), )
 
 !uvok_calc_(&nzloc,&locallatitude[ip],&day,&relyr,
 !&localTs[kl],&localSs[kl],&TRglobavg[0],&localdz[kl],zt,
