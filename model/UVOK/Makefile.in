@@ -12,6 +12,7 @@ FFLAGS = -fdefault-real-8 -I model/UVOK/uvic
 # BGC object files
 BGCMODELOBJ = \
 	uvok_ini.o \
+	uvok_calc.o \
 	model.o \
 	uvic/UVic_ESCM.o \
 

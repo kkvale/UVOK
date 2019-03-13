@@ -89,7 +89,7 @@ mkdir UVOK/uvic
 ```sh
 echo '#include "UVOK_TMM_OPTIONS.h"' > include_uvok_tmm_options.h
 
-cp 
+cp tmm/models/current/uvok1.0/runscripts/control.in UVOK/.
 cp tmm/models/current/uvok1.0/src/UVOK_TMM_OPTIONS.h UVOK/.
 cat include_uvok_tmm_options.h tmm/models/current/uvok1.0/src/uvok_ini.F > UVOK/uvok_ini.F
 cat include_uvok_tmm_options.h tmm/models/current/uvok1.0/src/uvok_calc.F > UVOK/uvok_calc.F
