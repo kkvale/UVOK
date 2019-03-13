@@ -145,13 +145,16 @@ def prepare_forcing(ctx):
     lat = read_from_mat_file(ctx, file_in, 'Ybox')
     lat = lat[0,:6386]
     write_petsc_vector('forcing/boundary/latitude.petsc', lat)
-    #
+
     file_in = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
     prepare_forcing_boundary(ctx, file_in, 'aice', 12, 'aice')
     prepare_forcing_boundary(ctx, file_in, 'hice', 12, 'hice')
     prepare_forcing_boundary(ctx, file_in, 'hsno', 12, 'hsno')
     prepare_forcing_boundary(ctx, file_in, 'wind', 12, 'wind')
     prepare_forcing_boundary(ctx, file_in, 'swrad', 12, 'swrad')
+    
+#    file_in = 
+
     
     # prepare domain
     prepare_forcing_domain(ctx, file_in, 'Fe', 12, 'Fe_dissolved')

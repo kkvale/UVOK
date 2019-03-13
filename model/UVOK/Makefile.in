@@ -1,6 +1,13 @@
 # c ompiler flags
 CFLAGS = -DBGCINIT=metos3dbgcinit_ -DBGCBEGIN=metos3dbgcbegin_ -DBGC=metos3dbgc_  -DBGCEND=metos3dbgcend_ -DBGCFINAL=metos3dbgcfinal_
-FFLAGS = -I model/UVOK/uvic
+FFLAGS = -fdefault-real-8 -I model/UVOK/uvic
+
+# FFLAGS = -I model/UVOK/uvic $(UVOK_FFLAGS)
+# make BGC=model/UVOK UVOK_FFLAGS=-fdefault-real-8
+
+# ifort, FFLAGS+=-r8
+# gfortran, FFLAGS+=-fdefault-real-8
+# xlf, FPPFLAG+=-WF, FFLAGS+=-qrealsize=8 -qzerosize
 
 # BGC object files
 BGCMODELOBJ = \

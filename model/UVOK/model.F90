@@ -1,6 +1,6 @@
 !
 ! Metos3D: A Marine Ecosystem Toolkit for Optimization and Simulation in 3-D
-! Copyright (C) 2014  Jaroslaw Piwonski, CAU, jpi@informatik.uni-kiel.de
+! Copyright (C) 2019  Jaroslaw Piwonski, CAU, jpi@informatik.uni-kiel.de
 !
 ! This program is free software: you can redistribute it and/or modify
 ! it under the terms of the GNU General Public License as published by
@@ -31,12 +31,12 @@ subroutine metos3dbgcinit(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     real(8) :: dtbgc
     logical :: debug
 
-    zt = d(:, 1)
-    z = d(:, 2)
+    zt = d(:, 1)                ! layers mids
+    z = d(:, 2)                 ! layers depths
     dtbgc = 28800.0d0
     debug = .true.
 
-    print *, nx
+    print *, nx, ny
     print *, zt
     print *, z
     print *, dtbgc
@@ -44,7 +44,7 @@ subroutine metos3dbgcinit(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     print *, trace_avg
     print *, debug
 
-!    call uvok_ini(nx, zt, z, dtbgc, salt_avg, trace_avg, debug)
+    call uvok_ini(nx, zt, z, dtbgc, salt_avg, trace_avg, debug)
 
 !SUBROUTINE UVOK_INI(
 !nzmax,
@@ -219,9 +219,13 @@ subroutine getunit (iounit, oldfilename, optionlist)
     integer iounit
     character(*) :: oldfilename, optionlist
     iounit = 1
+    open(unit=iounit, file=oldfilename)
 end
 
 subroutine relunit (iounit)
+    implicit none
+    integer iounit
+    close(iounit)
 end
 
 character(120) function new_file_name(filename)
