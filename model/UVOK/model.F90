@@ -67,11 +67,17 @@ subroutine metos3dbgc(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     real(8) :: totfluxloc = 0.d0
     real(8) :: day_loc
 
-    day_loc = ...
+    integer :: istep
+    real(8) :: day_frac
+
+    ! hard coded number of time steps
+    istep = nint(t*1095.0)
+    day_frac = 365.0/1095.0
+    day_loc = istep*day_frac
 
     ! kmt_loc               nx
     ! tlat_loc              b(1)
-    ! day_loc
+    ! day_loc               day_loc
     ! relyr_loc             t
     ! TEMP                  d(:,3)
     ! SALT                  d(:,4)
@@ -89,7 +95,7 @@ subroutine metos3dbgc(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     ! gasexfluxloc          gasexfluxloc
     ! totfluxloc            totfluxloc
     ! debugFlag             debug
-    call uvok_calc(nx, b(1), )
+!    call uvok_calc(nx, b(1), )
 
 !uvok_calc_(&nzloc,&locallatitude[ip],&day,&relyr,
 !&localTs[kl],&localSs[kl],&TRglobavg[0],&localdz[kl],zt,

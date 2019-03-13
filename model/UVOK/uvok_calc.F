@@ -54,13 +54,13 @@ C
         if (kmt_loc .eq. km) then
             print *, kmt_loc
             print *, tlat_loc, day_loc, relyr_loc
-            print *, TEMP(kmt_loc), SALT(kmt_loc)
-            print *, TR_surf_glob(nsrc)
-            print *, dz_loc(kmt_loc)
-            print *, z_loc(kmt_loc)
+            print *, TEMP, SALT
+            print *, TR_surf_glob
+            print *, dz_loc
+            print *, z_loc
 
             print *, winds_loc
-            print *, fe_dissolved_loc(kmt_loc)
+            print *, fe_dissolved_loc
             print *, swr_loc
             print *, aice_loc, hice_loc, hsno_loc
             print *, emp_loc, emp_glob
