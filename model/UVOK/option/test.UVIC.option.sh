@@ -46,7 +46,7 @@
 
 # bgc boudary conditions
 -Metos3DBoundaryConditionCount                      0
-#-Metos3DBoundaryConditionInputDirectory             data/TMM/2.8/Forcing/BoundaryCondition/
+#-Metos3DBoundaryConditionInputDirectory             data/forcing/boundary/
 #-Metos3DBoundaryConditionName                       Latitude,IceCover
 # latitude
 # ice cover
@@ -58,10 +58,10 @@
 # bgc domain conditions
 -Metos3DDomainConditionCount                        2
 -Metos3DDomainConditionInputDirectory               data/forcing/domain/
--Metos3DDomainConditionName                         LayerMid,LayerHeight
-# layer mid
--Metos3DLayerMidCount                               1
--Metos3DLayerMidFileFormat                          zt.petsc
+-Metos3DDomainConditionName                         LayerWithin,LayerHeight
+# point within layer
+-Metos3DLayerWithinCount                            1
+-Metos3DLayerWithinFileFormat                       zt.petsc
 # layer height
 -Metos3DLayerHeightCount                            1
 -Metos3DLayerHeightFileFormat                       dz.petsc

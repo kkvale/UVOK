@@ -15,95 +15,64 @@ C
 C You should have received a copy of the GNU General Public License
 C along with this program.  If not, see <http://www.gnu.org/licenses/>.
 C
+C   This routine is originally part of the official UVOK model:
+C       https://raw.githubusercontent.com/samarkhatiwala/tmm/master/models/current/uvok1.0/src/uvok_calc.F
+C
 
 #include "UVOK_TMM_OPTIONS.h"
-      subroutine uvok_calc()
 
+      subroutine uvok_calc(
+     &      kmt_loc, tlat_loc, day_loc, relyr_loc,
+     &      TEMP, SALT, TR_surf_glob,dz_loc,z_loc,
+     &      winds_loc,
+     &      fe_dissolved_loc,
+     &      swr_loc,
+     &      aice_loc, hice_loc, hsno_loc,
+     &      emp_loc, emp_glob,
+     &      gasexfluxloc, totfluxloc,
+     &      debugFlag)
 
+        implicit none
+
+#include "size.h"
+
+        integer kmt_loc
+        real tlat_loc, day_loc, relyr_loc
+        real TEMP(kmt_loc), SALT(kmt_loc)
+        real TR_surf_glob(nsrc)
+        real dz_loc(kmt_loc)
+        real z_loc(kmt_loc)
+!        real z(km)
+        real winds_loc
+        real fe_dissolved_loc(kmt_loc)            ! only the first min(kmfe,kmt_loc) elements are used
+        real swr_loc
+        real aice_loc, hice_loc, hsno_loc
+        real emp_loc, emp_glob
+        real gasexfluxloc, totfluxloc
+        integer debugFlag
+
+        if (kmt_loc .eq. km) then
+            print *, kmt_loc
+            print *, tlat_loc, day_loc, relyr_loc
+            print *, TEMP(kmt_loc), SALT(kmt_loc)
+            print *, TR_surf_glob(nsrc)
+            print *, dz_loc(kmt_loc)
+            print *, z_loc(kmt_loc)
+
+            print *, winds_loc
+            print *, fe_dissolved_loc(kmt_loc)
+            print *, swr_loc
+            print *, aice_loc, hice_loc, hsno_loc
+            print *, emp_loc, emp_glob
+            print *, gasexfluxloc, totfluxloc
+            print *, debugFlag
+            call exit(1)
+        endif
 
       end subroutine uvok_calc
 
-C#ifdef O_TMM
-C     SUBROUTINE UVOK_CALC(kmt_loc, tlat_loc, day_loc, relyr_loc,
-C    &     TEMP, SALT, TR_surf_glob,dz_loc,z,
-C# if defined O_carbon
-C#if defined O_co2ccn_data || defined O_TMM_interactive_atmosphere
-C    &     co2atm,
-C#endif
-C    &     winds_loc,
-C#endif
-C# if defined O_c14ccn_data
-C    &     dc14ccnnatm, dc14ccnsatm, dc14ccneatm,
-C#endif
-C#  if defined O_npzd_nitrogen_15
-C    &     sg_bathy_loc,
-C#  endif
-C#  if defined O_npzd_fe_limitation
-C    &     fe_dissolved_loc,
-C#  endif
-C#if defined O_npzd_iron
-C    &     fe_adep_loc, fe_detr_flux, fe_hydr_loc,
-C#endif
-C#  if defined O_embm
-C    &     swr_loc,
-C#  endif
-C#  if defined O_ice
-C#   if !defined O_ice_cpts
-C    &     aice_loc, hice_loc, hsno_loc,
-C#   endif
-C#  endif
-C    & emp_loc, emp_glob,
-C# if defined O_carbon
-C    & gasexfluxloc, totfluxloc,
-C# endif
-C    & debugFlag)
-C
-C     implicit none
-C
-C#include "size.h"
-C
-C     integer kmt_loc
-C     real tlat_loc, day_loc, relyr_loc
-C     real TEMP(kmt_loc), SALT(kmt_loc)
-C     real TR_surf_glob(nsrc)
-C     real dz_loc(kmt_loc)
-C     real z(km)
-C
-C# if defined O_carbon
-C#if defined O_co2ccn_data || defined O_TMM_interactive_atmosphere
-C     real co2atm
-C#endif
-C     real winds_loc
-C#endif
-C
-C# if defined O_c14ccn_data
-C     real dc14ccnnatm, dc14ccnsatm, dc14ccneatm
-C#endif
-C
-C#  if defined O_npzd_nitrogen
-C!      real sg_bathy_loc(kmt_loc)
-C#  endif
-C#  if defined O_npzd_fe_limitation
-C     real fe_dissolved_loc(kmt_loc) ! only the first min(kmfe,kmt_loc) elements are used
-C#  endif
-C#if defined O_npzd_iron
-C     real fe_adep_loc, fe_detr_flux, fe_hydr_loc(kmt_loc)
-C#endif
-C
-C#  if defined O_embm
-C  real swr_loc
-C#  endif
-C#  if defined O_ice
-C#   if !defined O_ice_cpts
-C     real aice_loc, hice_loc, hsno_loc
-C#   endif
-C#  endif
-C     real emp_loc, emp_glob
-C# if defined O_carbon
-C     real gasexfluxloc, totfluxloc
-C# endif
-C     integer debugFlag
-C
+
+
 C     integer i, k, j, ip, n
 C     real tarea, tsflx, rsocn, tmp
 C!       joff = offset relating "j" in the MW to latitude "jrow"
