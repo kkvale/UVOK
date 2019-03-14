@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+#   This file is based on:
+#       https://raw.githubusercontent.com/samarkhatiwala/tmm/master/models/current/uvok1.0/matlab/make_input_files_for_uvok_model.m
+#
 
 import scipy.sparse as spsp
 import scipy.io as spio
@@ -152,11 +155,25 @@ def prepare_forcing(ctx):
     prepare_forcing_boundary(ctx, file_in, 'hsno', 12, 'hsno')
     prepare_forcing_boundary(ctx, file_in, 'wind', 12, 'wind')
     prepare_forcing_boundary(ctx, file_in, 'swrad', 12, 'swrad')
-    
-#    file_in = 
 
+    # emp
+    file_in = ctx.uvic_bgc_path + '/grid.mat'
+    da = read_from_mat_file(ctx, file_in, 'da')
+    da = ma.array(da, mask=ctx.mask)
+    da = da[0,:,:].compressed()
+    #
+    file_in = ctx.uvic_bgc_path + '/GCM/FreshWaterForcing_gcm.mat'
+    emp = read_2d_list_from_mat_file(ctx, file_in, 'EmPgcm', 12)
+    emp = np.array(emp)
+    emp = emp - np.mean(emp.dot(da))/np.sum(da)
+    emp = 100*emp
+    emp = [emp[i,:] for i in range(emp.shape[0])]
+    #
+    file_out = 'forcing/boundary/' + 'EmP'
+    write_petsc_vector_list(file_out, emp)
     
     # prepare domain
+    file_in = ctx.uvic_bgc_path + '/BiogeochemData/UVOK_input_data.mat'
     prepare_forcing_domain(ctx, file_in, 'Fe', 12, 'Fe_dissolved')
     # salt
     file_in = ctx.uvic_bgc_path + '/GCM/Salt_gcm.mat'
@@ -254,9 +271,9 @@ def prepare_uvok_data(ctx):
     ctx.new_index = np.array(f['Ir_pre'][0,:] - 1, dtype='i4')
 
     prepare_forcing(ctx)
-    prepare_geometry(ctx)
-    prepare_ini(ctx)
-    prepare_transport(ctx)
+#    prepare_geometry(ctx)
+#    prepare_ini(ctx)
+#    prepare_transport(ctx)
 
 ### -----------------------------------------------------------------------------------------------
 
@@ -273,19 +290,6 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
-
-
-#import matplotlib
-#matplotlib.use("TkAgg")
-#import matplotlib.pyplot as plt
-#
-#n=5000
-#
 #import matplotlib
 #matplotlib.use("TkAgg")
 #import matplotlib.pyplot as plt
@@ -300,7 +304,5 @@ if __name__ == "__main__":
 #plt.clf()
 #plt.spy(ctx.mask[0,:,:].transpose())
 #plt.savefig('mask.png')
-
-
 
 

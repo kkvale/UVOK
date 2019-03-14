@@ -51,6 +51,7 @@ check_files_crop forcing/boundary/ hice
 check_files_crop forcing/boundary/ hsno
 check_files_crop forcing/boundary/ wind
 check_files_crop forcing/boundary/ swrad
+check_files_crop forcing/boundary/ EmP
 
 check_files forcing/domain/ Fe_dissolved
 check_files forcing/domain/ Ss
