@@ -271,38 +271,13 @@ def prepare_uvok_data(ctx):
     ctx.new_index = np.array(f['Ir_pre'][0,:] - 1, dtype='i4')
 
     prepare_forcing(ctx)
-#    prepare_geometry(ctx)
-#    prepare_ini(ctx)
-#    prepare_transport(ctx)
+    prepare_geometry(ctx)
+    prepare_ini(ctx)
+    prepare_transport(ctx)
 
 ### -----------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     ctx = Context()
     prepare_uvok_data(ctx)
-
-
-
-
-
-
-
-
-
-
-#import matplotlib
-#matplotlib.use("TkAgg")
-#import matplotlib.pyplot as plt
-#
-#plt.imshow(f['aice'][:,:,0])
-#plt.savefig('aice.png')
-#
-#plt.clf()
-#plt.imshow(aice[:,:])
-#plt.savefig('aice2.png')
-#
-#plt.clf()
-#plt.spy(ctx.mask[0,:,:].transpose())
-#plt.savefig('mask.png')
-
 
