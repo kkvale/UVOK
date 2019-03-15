@@ -98,6 +98,7 @@ if __name__ == '__main__':
             if os.path.exists(file_path):
                 print(file_path)
                 # link
+                # TODO check if present, remove first before link
                 try:
                     os.symlink(file_path, os.path.basename(file_path))
                 except:
@@ -105,53 +106,3 @@ if __name__ == '__main__':
                 break
 
 
-
-
-
-
-#SUBROUTINE UVOK_CALC(kmt_loc, tlat_loc, day_loc, relyr_loc,
-#                     &     TEMP, SALT, TR_surf_glob,dz_loc,z,
-#                     &     winds_loc,
-#                     &     fe_dissolved_loc,
-#                     &     swr_loc,
-#                     &     aice_loc, hice_loc, hsno_loc,
-#                     & emp_loc, emp_glob,
-#                     & gasexfluxloc, totfluxloc,
-#                     & debugFlag)
-
-
-
-
-
-
-#    uvic/UVic_ESCM.o \
-#    uvic/co2calc.o \
-#    uvic/tracer.o \
-#    uvic/setvbc.o \
-#    uvic/gosbc.o \
-#    uvic/gasbc.o \
-#    uvic/npzd_src.o \                    #                    'uvok_calc.F',
-#                    'uvok_stubs.F',
-#                    'uvok_diags_mod.F90',
-#                    'uvok_ini.F',
-#                    'iomngr.F',
-##external_forcing_uvok.c
-#
-##uvok_copy_data.F
-#uvok_ini.F
-#uvok_calc.F
-##uvok_diags.F
-#uvok_stubs.F
-#co2calc.F
-##file_names.F
-#gasbc.F
-#gosbc.F
-##iomngr.F
-#npzd_src.F
-#setvbc.F
-#tracer.F
-#UVic_ESCM.F
-#uvok_diags_mod.F90
-
-# iomngr.F
-#                    'iomngr.h',

@@ -40,3 +40,5 @@
  	 gbio=0.4, wd0=16, nuz=0.06, jdiar=0.4, kfe_D=0.1, nud0 = 0.07, kfe=0.12, dtnpzd=28800./
  &sed    /
  &matrix dtmat=28800.0/
+
+
