@@ -67,16 +67,16 @@ C
         real src(imt,km,jsmw:jemw,nsrc)
         common/uvokcomm/src
 
-        q(1:nx, 1)  = src(1, 1:nx, 1, 3)
-        q(1:nx, 2)  = src(1, 1:nx, 1, 4)
-        q(1:nx, 3)  = src(1, 1:nx, 1, 5)
-        q(1:nx, 4)  = src(1, 1:nx, 1, 6)
-        q(1:nx, 5)  = src(1, 1:nx, 1, 7)
-        q(1:nx, 6)  = src(1, 1:nx, 1, 8)
-        q(1:nx, 7)  = src(1, 1:nx, 1, 9)
-        q(1:nx, 8)  = src(1, 1:nx, 1, 10)
-        q(1:nx, 9)  = src(1, 1:nx, 1, 11)
-        q(1:nx, 10)  = src(1, 1:nx, 1, 12)
+        q(1:nx, 1)  = src(1, 1:nx, 1, idic)
+        q(1:nx, 2)  = src(1, 1:nx, 1, ic14)
+        q(1:nx, 3)  = src(1, 1:nx, 1, ialk)
+        q(1:nx, 4)  = src(1, 1:nx, 1, io2)
+        q(1:nx, 5)  = src(1, 1:nx, 1, ipo4)
+        q(1:nx, 6)  = src(1, 1:nx, 1, iphyt)
+        q(1:nx, 7)  = src(1, 1:nx, 1, izoop)
+        q(1:nx, 8)  = src(1, 1:nx, 1, idetr)
+        q(1:nx, 9)  = src(1, 1:nx, 1, ino3)
+        q(1:nx, 10) = src(1, 1:nx, 1, idiaz)
 
       end subroutine uvok_copy_from
 
