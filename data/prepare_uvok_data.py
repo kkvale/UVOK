@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 #   This file is based on:
-#       https://raw.githubusercontent.com/samarkhatiwala/tmm/master/models/current/uvok1.0/matlab/make_input_files_for_uvok_model.m
+#       https://github.com/samarkhatiwala/tmm/blob/master/models/current/uvok1.0/matlab/make_input_files_for_uvok_model.m
 #
 
 import scipy.sparse as spsp

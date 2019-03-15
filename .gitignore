@@ -1,10 +1,24 @@
-material/
 **/.DS_Store
-**/*.petsc
-**/*.tar
-**/*.tar.gz
 
-**/uvic
-**/*.o
+data/forcing
+data/ini
+data/transport
+data/geometry
+data/check_data.sh
+data/from_spk.tar.gz
+
+model/UVOK/uvic
 
 
+
+
+
+
+
+#material/
+#**/*.petsc
+#**/*.tar
+#**/*.tar.gz
+
+#**/uvic
+#**/*.o

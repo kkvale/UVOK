@@ -15,7 +15,7 @@ This repository consists of the required resources to run the
 
 Install `conda` including **Python 3** for **Mac OS X**:
 
-```
+```sh
 curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
 bash Miniconda3-latest-MacOSX-x86_64.sh
 # follow the instructions and let the installer modify your PATH variable
@@ -23,7 +23,7 @@ bash Miniconda3-latest-MacOSX-x86_64.sh
 
 Install `conda` including **Python 3** for **Linux**:
 
-```
+```sh
 curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh
 # follow the instructions and let the installer modify your PATH variable
@@ -31,7 +31,7 @@ bash Miniconda3-latest-Linux-x86_64.sh
 
 If `conda` has been installed, get `scipy` and `h5py` (HDF5):
 
-```
+```sh
 conda install scipy
 conda install h5py
 ```
