@@ -1,20 +1,15 @@
 # Prepare Metos3D UVOK model sources
 
-...
-
-## Download model sources
+## Download UVOK model sources
 
 ```sh
-cd model/
 git clone https://github.com/samarkhatiwala/tmm.git
 ```
 
 ## Prepare directory structure
 
 ```sh
-cd model/
 mkdir UVOK
-mkdir UVOK/option
 mkdir UVOK/uvic
 ```
 ## Prepare UVOK model files
