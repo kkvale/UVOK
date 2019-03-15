@@ -5,7 +5,7 @@ data/ini
 data/transport
 data/geometry
 data/check_data.sh
-data/from_spk.tar.gz
+data/from_spk
 
 model/UVOK/**/*.o
 model/UVOK/uvic

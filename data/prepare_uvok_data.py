@@ -256,8 +256,6 @@ def prepare_uvok_data(ctx):
         '''
     # input directories
     ctx.uvok_path       = 'tmm/models/current/uvok1.0'
-#    ctx.tmm_path        = 'tmm'
-#    ctx.tmm_matlab_path = 'tmm_matlab_code'
     ctx.uvic_tmm_path   = 'UVic_Kiel_increase_isopyc_diff'
     ctx.uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
     # mask
