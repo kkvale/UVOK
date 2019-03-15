@@ -1,3 +1,24 @@
+#
+# Metos3D: A Marine Ecosystem Toolkit for Optimization and Simulation in 3-D
+# Copyright (C) 2019  Jaroslaw Piwonski, CAU, jpi@informatik.uni-kiel.de
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#   This file is based on:
+#       https://github.com/samarkhatiwala/tmm/blob/master/models/current/uvok1.0/src/Makefile
+#
+
 import os
 
 base_dir = '.'
@@ -97,12 +118,9 @@ if __name__ == '__main__':
 #            print(file_path, os.path.exists(file_path))
             if os.path.exists(file_path):
                 print(file_path)
-                # link
-                # TODO check if present, remove first before link
-                try:
-                    os.symlink(file_path, os.path.basename(file_path))
-                except:
-                    pass
+                # copy
+                cmd = 'cp {} {}'.format(file_path, os.path.basename(file_path))
+                os.system(cmd)
                 break
 
 
