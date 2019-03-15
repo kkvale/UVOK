@@ -10,7 +10,17 @@ data/from_spk
 model/UVOK/*.o
 model/UVOK/uvic
 
+test/petsc/petsc-3.10.4/
+test/petsc/petsc-lite-3.10.4.tar.gz
 
+
+test/Makefile
+test/control.in
+test/data
+test/metos3d-simpack-UVOK.exe
+test/model
+test/simpack
+test/work
 
 
 

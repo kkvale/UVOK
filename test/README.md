@@ -2,4 +2,21 @@
 
 ...
 
+PETSc
+
+```sh
+mkdir petsc
+cd petsc/
+curl -O http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-3.10.4.tar.gz
+touch petsc.env.sh
+
+tar xfz petsc-lite-3.10.4.tar.gz
+
+cd petsc-3.10.4/
+
+python2.7 ./configure --with-mpi=0 --with-x=0 --FC=gfortran --FFLAGS='-Wl,-rpath /Users/jpicau/miniconda3/lib'
+make PETSC_DIR=/Users/jpicau/Documents/development/uvok/test/petsc/petsc-3.10.4 PETSC_ARCH=arch-darwin-c-debug all
+
+```
+
 
