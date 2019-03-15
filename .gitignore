@@ -7,6 +7,7 @@ data/geometry
 data/check_data.sh
 data/from_spk.tar.gz
 
+model/UVOK/**/*.o
 model/UVOK/uvic
 
 
