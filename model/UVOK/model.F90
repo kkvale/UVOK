@@ -30,14 +30,15 @@ subroutine metos3dbgcinit(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     real(8) :: dtbgc = 28800.0d0
     integer :: debug = 1
 
-    ! nzmax             nx
-    ! z                 d(:,1)
-    ! drF               d(:,2)
-    ! DeltaT            dtbgc
-    ! S_surf_glob       salt_avg
-    ! TR_surf_glob      trace_avg
-    ! debugFlag         debug
-    call uvok_ini(nx, d(1,1), d(1,2), dtbgc, salt_avg, trace_avg, debug)
+    call uvok_ini( &
+        nx,         &   ! nzmax
+        d(1,1),     &   ! z
+        d(1,2),     &   ! drF
+        dtbgc,      &   ! DeltaT
+        salt_avg,   &   ! S_surf_glob
+        trace_avg,  &   ! TR_surf_glob
+        debug       &   ! debugFlag
+    )
 
 end subroutine
 
@@ -75,37 +76,56 @@ subroutine metos3dbgc(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     day_frac = 365.0/1095.0
     day_loc = istep*day_frac
 
-    ! kmt_loc               nx
-    ! tlat_loc              b(1)
-    ! day_loc               day_loc
-    ! relyr_loc             t
-    ! TEMP                  d(:,3)
-    ! SALT                  d(:,4)
-    ! TR_surf_glob          trace_avg
-    ! dz_loc                d(:,2)
-    ! z                     d(:,1)
-    ! winds_loc             b(2)
-    ! fe_dissolved_loc      d(:,5)
-    ! swr_loc               b(3)
-    ! aice_loc              b(4)
-    ! hice_loc              b(5)
-    ! hsno_loc              b(6)
-    ! emp_loc
-    ! emp_glob              emp_glob
-    ! gasexfluxloc          gasexfluxloc
-    ! totfluxloc            totfluxloc
-    ! debugFlag             debug
-!    call uvok_calc(nx, b(1), )
+    print *, 'metos3dbgc'
+    print *, y(:,1)
+    print *, y(:,2)
+    print *, y(:,3)
+    print *, y(:,4)
+    print *, y(:,5)
+    print *, y(:,6)
+    print *, y(:,7)
+    print *, y(:,8)
+    print *, y(:,9)
+    print *, y(:,10)
 
-!uvok_calc_(&nzloc,&locallatitude[ip],&day,&relyr,
-!&localTs[kl],&localSs[kl],&TRglobavg[0],&localdz[kl],zt,
-!&localwind[ip],
-!&localFe_dissolved[kl],
-!&localswrad[ip],
-!&localaice[ip], &localhice[ip], &localhsno[ip],
-!&localEmP[ip], &EmPglobavg,
-!&localgasexflux, &localtotflux,
-!&debugFlag);
+    call uvok_copy_to(ny, nx, y)
+    call uvok_calc( &
+        nx,             &   ! kmt_loc
+        b(1),           &   ! tlat_loc
+        day_loc,        &   ! day_loc
+        t,              &   ! relyr_loc
+        d(1,3),         &   ! TEMP
+        d(1,4),         &   ! SALT
+        trace_avg,      &   ! TR_surf_glob
+        d(1,2),         &   ! dz_loc
+        d(1,1),         &   ! z
+        b(2),           &   ! winds_loc
+        d(1,5),         &   ! fe_dissolved_loc
+        b(3),           &   ! swr_loc
+        b(4),           &   ! aice_loc
+        b(5),           &   ! hice_loc
+        b(6),           &   ! hsno_loc
+        b(7),           &   ! emp_loc
+        emp_glob,       &   ! emp_glob
+        gasexfluxloc,   &   ! gasexfluxloc
+        totfluxloc,     &   ! totfluxloc
+        debug           &   ! debugFlag
+    )
+    call uvok_copy_from(ny, nx, q)
+
+    print *, 'metos3dbgc'
+    print *, q(:,1)
+    print *, q(:,2)
+    print *, q(:,3)
+    print *, q(:,4)
+    print *, q(:,5)
+    print *, q(:,6)
+    print *, q(:,7)
+    print *, q(:,8)
+    print *, q(:,9)
+    print *, q(:,10)
+
+    call exit(1)
 
 end subroutine
 
@@ -200,6 +220,20 @@ end
 
 
 
+
+
+
+
+
+!uvok_calc_(&nzloc,&locallatitude[ip],&day,&relyr,
+!&localTs[kl],&localSs[kl],&TRglobavg[0],&localdz[kl],zt,
+!&localwind[ip],
+!&localFe_dissolved[kl],
+!&localswrad[ip],
+!&localaice[ip], &localhice[ip], &localhsno[ip],
+!&localEmP[ip], &EmPglobavg,
+!&localgasexflux, &localtotflux,
+!&debugFlag);
 
 
 !    print *, nx, ny

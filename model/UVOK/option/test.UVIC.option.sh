@@ -45,15 +45,16 @@
 #-Metos3DParameterValue                              
 
 # bgc boudary conditions
--Metos3DBoundaryConditionCount                      6
+-Metos3DBoundaryConditionCount                      7
 -Metos3DBoundaryConditionInputDirectory             data/forcing/boundary/
--Metos3DBoundaryConditionName                       Latitude,Wind,SWRAD,IceArea,IceHeight,SnowHeight
+-Metos3DBoundaryConditionName                       Latitude,Wind,SWRAD,IceArea,IceHeight,SnowHeight,EmP
 # latitude
 # wind
 # short wave radiation
 # ice area
 # ice height
 # snow height
+# evaporation minus precipitation
 -Metos3DLatitudeCount                               1
 -Metos3DLatitudeFileFormat                          latitude.petsc
 -Metos3DWindCount                                   12
@@ -66,6 +67,8 @@
 -Metos3DIceHeightFileFormat                         hice_$02d.petsc
 -Metos3DSnowHeightCount                             12
 -Metos3DSnowHeightFileFormat                        hsno_$02d.petsc
+-Metos3DEmPCount                                    12
+-Metos3DEmPFileFormat                               EmP_$02d.petsc
 
 # bgc domain conditions
 -Metos3DDomainConditionCount                        5
