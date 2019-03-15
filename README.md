@@ -2,16 +2,17 @@
 
 This repository consists of the required resources to run the
 [UVOK](https://github.com/samarkhatiwala/tmm/tree/master/models/current/uvok1.0) model with
-[Metos3D](https://github.com/metos3d). See the particular READMEs for details:
+[Metos3D](https://github.com/metos3d). See the particular subdirectories for details:
 
-- [`data/README.md`](data/README.md) How to prepare the data?
-- [`model/README.md`](model/README.md) How to prepare the model sources?
-- [`test/README.md`](test/README.md) How to run Metos3D with UVOK?
+- [`data/`](data/) How to prepare the data?
+- [`model/`](model/) How to prepare the model sources?
+- [`test/`](test/) How to run Metos3D with UVOK?
 
 > **Note:**
 > We use the [Miniconda Python ecosystem](https://docs.conda.io/en/latest/miniconda.html)
 > to prepare the data. In particular, we need `scipy` to access *older* and
-> `h5py` to access *newer* Matlab files. 
+> `h5py` to access *newer* Matlab files. Moreover, we use `numpy` arrays internally.
+> However, the `numpy` module is installed along with `scipy`.
 
 Install `conda` including **Python 3** for **Mac OS X**:
 
