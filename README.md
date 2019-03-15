@@ -4,7 +4,7 @@ This repository consists of the required resources to run the
 [UVOK](https://github.com/samarkhatiwala/tmm/tree/master/models/current/uvok1.0) model with
 [Metos3D](https://github.com/metos3d):
 
-- `data`
+- [`data/README.md`](data/README.md)
 - `model`
 - `test`
 
