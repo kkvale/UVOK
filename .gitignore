@@ -22,15 +22,3 @@ test/simpack
 test/work
 
 
-
-
-#model/UVOK/uvic
-#material/
-#**/*.petsc
-#**/*.tar
-#**/*.tar.gz
-#**/uvic
-#**/*.o
-#model/UVOK/uvic/*.[ohFf]
-#/petsc-3.10.4/
-#test/petsc/petsc-lite-3.10.4.tar.gz
