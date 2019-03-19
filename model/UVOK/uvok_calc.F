@@ -83,6 +83,39 @@ C
         t(1,1:kmt_loc,1,itemp,taum1) = TEMP(1:kmt_loc)      ! degree Celsius
         t(1,1:kmt_loc,1,isalt,taum1) = SALT(1:kmt_loc)
 
+        print *
+        print *, imt, km, jsmw, jemw, nsrc, nt
+        print *, itemp, isalt, idic, ic14, ialk, io2
+        print *, ipo4, iphyt, izoop, idetr, ino3, idiaz
+        print *, itrc
+
+        print *, 't'
+        print *, t(1,1:kmt_loc,1,itemp,taum1)
+        print *, t(1,1:kmt_loc,1,isalt,taum1)
+        print *, t(1,1:kmt_loc,1,idic,taum1)
+        print *, t(1,1:kmt_loc,1,ic14,taum1)
+        print *, t(1,1:kmt_loc,1,ialk,taum1)
+        print *, t(1,1:kmt_loc,1,io2,taum1)
+        print *, t(1,1:kmt_loc,1,ipo4,taum1)
+        print *, t(1,1:kmt_loc,1,iphyt,taum1)
+        print *, t(1,1:kmt_loc,1,izoop,taum1)
+        print *, t(1,1:kmt_loc,1,idetr,taum1)
+        print *, t(1,1:kmt_loc,1,ino3,taum1)
+        print *, t(1,1:kmt_loc,1,idiaz,taum1)
+
+        print *, 'src'
+        print *, src(1,1:kmt_loc,1,itrc(idic))
+        print *, src(1,1:kmt_loc,1,itrc(ic14))
+        print *, src(1,1:kmt_loc,1,itrc(ialk))
+        print *, src(1,1:kmt_loc,1,itrc(io2))
+        print *, src(1,1:kmt_loc,1,itrc(ipo4))
+        print *, src(1,1:kmt_loc,1,itrc(iphyt))
+        print *, src(1,1:kmt_loc,1,itrc(izoop))
+        print *, src(1,1:kmt_loc,1,itrc(idetr))
+        print *, src(1,1:kmt_loc,1,itrc(ino3))
+        print *, src(1,1:kmt_loc,1,itrc(idiaz))
+!        call exit(1)
+
         ! SPK set SBC arrays: code based on UVic_ESCM.F
         ! SPK note: we set tau, taum1 and taup1 to all point to the same location in S/R uvok_ini
         i = 1
@@ -91,6 +124,9 @@ C
         taum1 = 0
         taup1 = 0
 
+        ! TEMP, SALT
+        if (isst .ne. 0)    sbc(i,j,isst)       = t(i,1,j,itemp,taup1)
+        if (isss .ne. 0)    sbc(i,j,isss)       = t(i,1,j,isalt,taup1)
         ! DIC,C14,ALK,O2,PO4,PHY,ZOO,DET,NO3,DIAZ
         if (issdic .ne. 0)  sbc(i,j,issdic)     = t(i,1,j,idic,taup1)
         if (issc14 .ne. 0)  sbc(i,j,issc14)     = t(i,1,j,ic14,taup1)
@@ -102,6 +138,26 @@ C
         if (issdetr .ne. 0) sbc(i,j,issdetr)    = t(i,1,j,idetr,taup1)
         if (issno3 .ne. 0)  sbc(i,j,issno3)     = t(i,1,j,ino3,taup1)
         if (issdiaz .ne. 0) sbc(i,j,issdiaz)    = t(i,1,j,idiaz,taup1)
+
+        print *, 'sbc'
+        print *, numsbc
+        print *, isst, isss
+        print *, issdic, issc14, issalk, isso2, isspo4
+        print *, issphyt, isszoop, issdetr, issno3, issdiaz
+        print *
+        if (isst .ne. 0)    print *, sbc(i,j,isst)
+        if (isss .ne. 0)    print *, sbc(i,j,isss)
+        if (issdic .ne. 0)  print *, sbc(i,j,issdic)
+        if (issc14 .ne. 0)  print *, sbc(i,j,issc14)
+        if (issalk .ne. 0)  print *, sbc(i,j,issalk)
+        if (isso2 .ne. 0)   print *, sbc(i,j,isso2)
+        if (isspo4 .ne. 0)  print *, sbc(i,j,isspo4)
+        if (issphyt .ne. 0) print *, sbc(i,j,issphyt)
+        if (isszoop .ne. 0) print *, sbc(i,j,isszoop)
+        if (issdetr .ne. 0) print *, sbc(i,j,issdetr)
+        if (issno3 .ne. 0)  print *, sbc(i,j,issno3)
+        if (issdiaz .ne. 0) print *, sbc(i,j,issdiaz)
+        call exit(1)
 
         ! SPK The sequence here is based on the time stepping in UVic_ESCM.F
         ! SPK copy over winds and other data needed subsequently by S/R gasbc and S/R tracer

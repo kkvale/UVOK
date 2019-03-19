@@ -67,16 +67,16 @@ C
         real src(imt,km,jsmw:jemw,nsrc)
         common/uvokcomm/src
 
-        q(1:nx, 1)  = src(1, 1:nx, 1, idic)
-        q(1:nx, 2)  = src(1, 1:nx, 1, ic14)
-        q(1:nx, 3)  = src(1, 1:nx, 1, ialk)
-        q(1:nx, 4)  = src(1, 1:nx, 1, io2)
-        q(1:nx, 5)  = src(1, 1:nx, 1, ipo4)
-        q(1:nx, 6)  = src(1, 1:nx, 1, iphyt)
-        q(1:nx, 7)  = src(1, 1:nx, 1, izoop)
-        q(1:nx, 8)  = src(1, 1:nx, 1, idetr)
-        q(1:nx, 9)  = src(1, 1:nx, 1, ino3)
-        q(1:nx, 10) = src(1, 1:nx, 1, idiaz)
+        q(1:nx, 1)  = src(1, 1:nx, 1, itrc(idic))
+        q(1:nx, 2)  = src(1, 1:nx, 1, itrc(ic14))
+        q(1:nx, 3)  = src(1, 1:nx, 1, itrc(ialk))
+        q(1:nx, 4)  = src(1, 1:nx, 1, itrc(io2))
+        q(1:nx, 5)  = src(1, 1:nx, 1, itrc(ipo4))
+        q(1:nx, 6)  = src(1, 1:nx, 1, itrc(iphyt))
+        q(1:nx, 7)  = src(1, 1:nx, 1, itrc(izoop))
+        q(1:nx, 8)  = src(1, 1:nx, 1, itrc(idetr))
+        q(1:nx, 9)  = src(1, 1:nx, 1, itrc(ino3))
+        q(1:nx, 10) = src(1, 1:nx, 1, itrc(idiaz))
 
       end subroutine uvok_copy_from
 

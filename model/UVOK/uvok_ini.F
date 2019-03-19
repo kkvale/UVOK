@@ -76,36 +76,45 @@ C
         zt(:) = c0
         zw(:) = c0
 
-        do k=1,km
+!        do k=1,km
+        do k=1,nzmax
             dzt(k) = drF(k)
             zt(k) = z(k)
         enddo
 
         zw(1) = drF(1)
-        do k=2,km
+!        do k=2,km
+        do k=2,nzmax
             zw(k) = zw(k-1) + drF(k)
         enddo
 
-        do k=1,km-1
+!        do k=1,km-1
+        do k=1,nzmax-1
             dzw(k) = zt(k+1) - zt(k)
         enddo
         dzw(0) = zt(1)
-        dzw(km) = zw(km) - zt(km)
+!        dzw(km) = zw(km) - zt(km)
+        dzw(nzmax) = zw(nzmax) - zt(nzmax)
 
-        do k=1,km
+!        do k=1,km
+        do k=1,nzmax
             c2dzt(k) = c2*dzt(k)
             dzt2r(k) = c1/c2dzt(k)
         enddo
 
-        dzwr(km)  = c1/dzw(km)
-        dzw2r(km) = p5/dzw(km)
+!        dzwr(km)  = c1/dzw(km)
+!        dzw2r(km) = p5/dzw(km)
+        dzwr(nzmax)  = c1/dzw(nzmax)
+        dzw2r(nzmax) = p5/dzw(nzmax)
 
-        do k=1,km
+!        do k=1,km
+        do k=1,nzmax
             dzwr(k-1)    = c1/dzw(k-1)
             dzw2r(k-1)   = p5/dzw(k-1)
         enddo
 
-        do k=1,km
+!        do k=1,km
+        do k=1,nzmax
             dztr(k)  = c1/dzt(k)
         enddo
 
@@ -129,21 +138,25 @@ C
         nuz = nuz/daylen
         nud0 = nud0/daylen
 
-        do k=1,km
+!        do k=1,km
+        do k=1,nzmax
             ! linear increase wd0-200m with depth
             wd(k) = (wd0+6.0e-2*zt(k))/daylen/dzt(k) ! [s-1]
             rkwz(k) = 1./(kw*dzt(k))
         enddo
         ztt(1)=0.0
-        do k=1,km-1
+!        do k=1,km-1
+        do k=1,nzmax-1
             ztt(k+1)=(-1)*zw(k)
         enddo
-        ztt(km)=(-1)*zw(km-1)
+!        ztt(km)=(-1)*zw(km-1)
+        ztt(nzmax)=(-1)*zw(nzmax-1)
 
         ! calculate variables used in calcite remineralization
         rcak(1) = -(exp(-zw(1)/dcaco3)-1.0)/dzt(1)
         rcab(1) = 1./dzt(1)
-        do k=2,km
+!        do k=2,km
+        do k=2,nzmax
             rcak(k) = -(exp(-zw(k)/dcaco3))/dzt(k)
      &         + (exp(-zw(k-1)/dcaco3))/dzt(k)
             rcab(k) = (exp(-zw(k-1)/dcaco3))/dzt(k)
@@ -180,9 +193,9 @@ C
         timavgperts = .false.
         tsiperts = .false.
 
-        do k=km,1,-1
-            if (zw(k) .gt. 24000) kmfe = k-1
-        enddo
+!        do k=km,1,-1
+!            if (zw(k) .gt. 24000) kmfe = k-1
+!        enddo
 
       end subroutine uvok_ini
 

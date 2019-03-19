@@ -26,7 +26,8 @@ subroutine metos3dbgcinit(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     real(8) :: dt, q(nx, ny), t, y(nx, ny), u(nu), b(nb), d(nx, nd), diag(nx, ndiag)
 
     real(8) :: salt_avg = -3.451231022787175e-004
-    real(8) :: trace_avg(10) = (/ 2.315e0, 2.3140740e-012, 2.429e0, 0.1692e0, 0.543e0, 0.14e0, 1.4e-002, 1.0e-004, 5.3e0, 1.4e-002 /)
+    real(8) :: trace_avg(10) = (/ &
+        2.315e0, 2.3140740e-012, 2.429e0, 0.1692e0, 0.543e0, 0.14e0, 1.4e-002, 1.0e-004, 5.3e0, 1.4e-002 /)
     real(8) :: dtbgc = 28800.0d0
     integer :: debug = 1
 
@@ -61,7 +62,8 @@ subroutine metos3dbgc(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     integer :: ny, nx, nu, nb, nd, ndiag
     real(8) :: dt, q(nx, ny), t, y(nx, ny), u(nu), b(nb), d(nx, nd), diag(nx, ndiag)
 
-    real(8) :: trace_avg(10) = (/ 2.315e0, 2.3140740e-012, 2.429e0, 0.1692e0, 0.543e0, 0.14e0, 1.4e-002, 1.0e-004, 5.3e0, 1.4e-002 /)
+    real(8) :: trace_avg(10) = (/ &
+        2.315e0, 2.3140740e-012, 2.429e0, 0.1692e0, 0.543e0, 0.14e0, 1.4e-002, 1.0e-004, 5.3e0, 1.4e-002 /)
     integer :: debug = 1
     real(8) :: emp_glob = 0.d0
     real(8) :: gasexfluxloc = 0.d0
