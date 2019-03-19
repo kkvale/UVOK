@@ -173,6 +173,7 @@ C
         gaost(:) = 0.
         if (isalt .ne. 0 .and. isss .ne. 0) then
             gaost(isalt) = S_surf_glob
+            socn = gaost(isalt) + 0.035
         endif
         itr = 0
         do n=3,nt

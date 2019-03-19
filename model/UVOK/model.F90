@@ -162,8 +162,12 @@ subroutine areaavg (data, dmsk, avg)
 end
 
 subroutine setbcx (a, imt, jmtorkm)
-!    implicit none
+    implicit none
+    integer imt, jmtorkm
+    real a(imt,jmtorkm)
 !    dimension a(imt,jmtorkm)
+    print *, 'setbcx'
+    print *, a
 end
 
 subroutine data (is, ie, js, je)

@@ -111,12 +111,6 @@
 # endif
 #include "fdift.h"
 
-        print *, 'tracer'
-        print *, snpzd
-        print *
-        print *, tnpzd
-        call exit(1)
-
 # if defined O_carbon_fnpzd
 !-----------------------------------------------------------------------
 !     create file for writing npzd 3d fluxes of carbon and alkalinity
@@ -191,6 +185,13 @@
         endif
       endif
 # endif
+
+        print *, 'tracer, begin ', 'ntnpzd', ntnpzd
+        print *, 'snpzd'
+        print *, snpzd
+        print *, 'tnpzd'
+        print *, tnpzd
+!        call exit(1)
 
 #ifndef O_TMM
 !-----------------------------------------------------------------------
@@ -427,12 +428,12 @@
                     fe_m = 4
 ! find fe data day index
                     call hunt (fe_x,fe_n,dayoyr,fe_jlo)
-! initialize the fe data array at the right day 
+! initialize the fe data array at the right day
                     fe_k = min(max(fe_jlo-(fe_m-1)/2,1),fe_n+1-fe_m)
 ! interpolate the fe data, note this does not use the whole array
                     call polint (fe_x(fe_k),fe_y(fe_k)
      &,                          fe_m,dayoyr,fe_conc,fe_dy)
-! calculate the fe limitation term                
+! calculate the fe limitation term
 #else
                fe_conc = fe_dissolved(i,j,k,1) !this is time-interpolated value
 #endif !not O_TMM
@@ -472,7 +473,7 @@
 #  endif
      &,                    bctz
      &                      )
-! These are source/sink terms 
+! These are source/sink terms
               snpzd(1:4) = snpzd(1:4)*rdtts(k)
 #  if defined O_npzd_nitrogen
               snpzd(5:6) = snpzd(5:6)*rdtts(k)
@@ -480,7 +481,7 @@
               expo = expo*rnbio(k)
 #  if defined O_save_npzd
               rexpo(i,k,j) = expo
-              rgraz(i,k,j) = graz*rnbio(k) 
+              rgraz(i,k,j) = graz*rnbio(k)
               rgraz_Det(i,k,j) = graz_Det*rnbio(k)
               rgraz_Z(i,k,j) = graz_Z*rnbio(k)
               rmorp(i,k,j) = morp*rnbio(k)
@@ -554,7 +555,7 @@
               if (timavgperts .and. .not. euler2) then
                 ta_rnpp(i,k,jrow) = ta_rnpp(i,k,jrow) + rnpp(i,k,j)
                 ta_rgraz(i,k,jrow) = ta_rgraz(i,k,jrow) + rgraz(i,k,j)
-                ta_rgraz_Z(i,k,jrow) = ta_rgraz_Z(i,k,jrow) 
+                ta_rgraz_Z(i,k,jrow) = ta_rgraz_Z(i,k,jrow)
      &                               + rgraz_Z(i,k,j)
                 ta_rgraz_Det(i,k,jrow) = ta_rgraz_Det(i,k,jrow)
      &                                 + rgraz_Det(i,k,j)
@@ -846,7 +847,7 @@
 		  ntile=n-ntilestart+1  ! index for tiles
 !         reset tracer to tiles/initial condition
 		  t(:,:,:,n,tau)=tile(:,:,:,ntile)
-		  t(:,:,:,n,taum1)=tile(:,:,:,ntile)         
+		  t(:,:,:,n,taum1)=tile(:,:,:,ntile)
         endif
 # endif
 
@@ -1070,8 +1071,8 @@
 !     accumulate explicit matrix and reset to tiles/initial condition
 	  if (isTile) then
 	    call MATRIX_STORE_EXPLICIT(ntile,t(1,1,1,n,taup1),twodt)
-      endif      
-# endif        
+      endif
+# endif
 # if defined O_implicitvmix || defined O_isopycmix || defined O_redi_diffusion
 
 !       2nd: add in portion of vertical diffusion handled implicitly
@@ -1079,8 +1080,8 @@
 		if (isTile) then
           call ivdift (joff, js, je, istrt, iend, n, dtmatrix)
         else
-          call ivdift (joff, js, je, istrt, iend, n, twodt)        
-		endif          
+          call ivdift (joff, js, je, istrt, iend, n, twodt)
+		endif
 # else
         call ivdift (joff, js, je, istrt, iend, n, twodt)
 #  endif
@@ -1318,6 +1319,13 @@
         enddo
       endif
 # endif
+
+        print *, 'tracer, end ', 'ntnpzd', ntnpzd
+        print *, 'snpzd'
+        print *, snpzd
+        print *, 'tnpzd'
+        print *, tnpzd
+        call exit(1)
 
       return
       end

@@ -84,7 +84,7 @@ C
         t(1,1:kmt_loc,1,isalt,taum1) = SALT(1:kmt_loc)
 
         print *
-        print *, imt, km, jsmw, jemw, nsrc, nt
+        print *, imt, km, jmw, jsmw, jemw, nsrc, nt
         print *, itemp, isalt, idic, ic14, ialk, io2
         print *, ipo4, iphyt, izoop, idetr, ino3, idiaz
         print *, itrc
@@ -157,7 +157,7 @@ C
         if (issdetr .ne. 0) print *, sbc(i,j,issdetr)
         if (issno3 .ne. 0)  print *, sbc(i,j,issno3)
         if (issdiaz .ne. 0) print *, sbc(i,j,issdiaz)
-        call exit(1)
+!        call exit(1)
 
         ! SPK The sequence here is based on the time stepping in UVic_ESCM.F
         ! SPK copy over winds and other data needed subsequently by S/R gasbc and S/R tracer
@@ -170,6 +170,8 @@ C
         ! SPK set atmospheric CO2 here as the call to co2ccndata in gasbc is to a stub routine where
         ! it would otherwise be read from file
 !        co2ccn = co2atm
+!        print *, 'co2ccn'
+!        print *, co2ccn
 
         ! SPK set global averages here if necessary as the calls in gasbc are to stub routines
         itr = 0
@@ -178,8 +180,21 @@ C
  	        gaost(n) = TR_surf_glob(itr)
         enddo
 
+        print *, 'gasbc, pre'
+        print *, 'sbc'
+        print *, sbc
+        print *, 'stf'
+        print *, stf
+
         ! get the atmospheric S.B.C.
         call gasbc (1, imt, 1, jmt)
+
+        print *, 'gasbc, post'
+        print *, 'sbc'
+        print *, sbc
+        print *, 'stf'
+        print *, stf
+!        call exit(1)
 
         ! SPK S/R gasbc computes the air-sea gas exchange flux in umol cm-2 s-1. We convert it here
         ! to mol m-2 s-1.
@@ -195,8 +210,23 @@ C
         ! Note: emp_glob is now not used and global mean freshwater flux is set to zero in gosbc.
         sbc(1,1,isflx) = emp_loc*socn
 
+        print *, 'emp_loc, socn', emp_loc, socn
+
+        print *, 'gosbc, pre'
+        print *, 'sbc'
+        print *, sbc
+        print *, 'stf'
+        print *, stf
+
         ! get ocean S.B.C.s
         call gosbc (1, imt, 1, jmt)
+
+        print *, 'gosbc, post'
+        print *, 'sbc'
+        print *, sbc
+        print *, 'stf'
+        print *, stf
+!        call exit(1)
 
         ! call the ocean model once for each time step until one
         ! segment of "segtim" days is complete. hold ocean S.B.C. fixed
@@ -209,8 +239,128 @@ C
         ie = 1
         joff = 0
 
+        print *, 'setvbc, pre'
+        print *, 't'
+        print *, t(1,1:kmt_loc,1,itemp,taum1)
+        print *, t(1,1:kmt_loc,1,isalt,taum1)
+        print *, t(1,1:kmt_loc,1,idic,taum1)
+        print *, t(1,1:kmt_loc,1,ic14,taum1)
+        print *, t(1,1:kmt_loc,1,ialk,taum1)
+        print *, t(1,1:kmt_loc,1,io2,taum1)
+        print *, t(1,1:kmt_loc,1,ipo4,taum1)
+        print *, t(1,1:kmt_loc,1,iphyt,taum1)
+        print *, t(1,1:kmt_loc,1,izoop,taum1)
+        print *, t(1,1:kmt_loc,1,idetr,taum1)
+        print *, t(1,1:kmt_loc,1,ino3,taum1)
+        print *, t(1,1:kmt_loc,1,idiaz,taum1)
+        print *, 'src'
+        print *, src(1,1:kmt_loc,1,itrc(idic))
+        print *, src(1,1:kmt_loc,1,itrc(ic14))
+        print *, src(1,1:kmt_loc,1,itrc(ialk))
+        print *, src(1,1:kmt_loc,1,itrc(io2))
+        print *, src(1,1:kmt_loc,1,itrc(ipo4))
+        print *, src(1,1:kmt_loc,1,itrc(iphyt))
+        print *, src(1,1:kmt_loc,1,itrc(izoop))
+        print *, src(1,1:kmt_loc,1,itrc(idetr))
+        print *, src(1,1:kmt_loc,1,itrc(ino3))
+        print *, src(1,1:kmt_loc,1,itrc(idiaz))
+        print *, 'sbc'
+        if (isst .ne. 0)    print *, sbc(i,j,isst)
+        if (isss .ne. 0)    print *, sbc(i,j,isss)
+        if (issdic .ne. 0)  print *, sbc(i,j,issdic)
+        if (issc14 .ne. 0)  print *, sbc(i,j,issc14)
+        if (issalk .ne. 0)  print *, sbc(i,j,issalk)
+        if (isso2 .ne. 0)   print *, sbc(i,j,isso2)
+        if (isspo4 .ne. 0)  print *, sbc(i,j,isspo4)
+        if (issphyt .ne. 0) print *, sbc(i,j,issphyt)
+        if (isszoop .ne. 0) print *, sbc(i,j,isszoop)
+        if (issdetr .ne. 0) print *, sbc(i,j,issdetr)
+        if (issno3 .ne. 0)  print *, sbc(i,j,issno3)
+        if (issdiaz .ne. 0) print *, sbc(i,j,issdiaz)
+        print *, 'sbc'
+        print *, sbc
+        print *, 'stf'
+        print *, stf
+
         call setvbc(joff, js, je, is, ie)
+
+        print *, 'setvbc, post'
+        print *, 't'
+        print *, t(1,1:kmt_loc,1,itemp,taum1)
+        print *, t(1,1:kmt_loc,1,isalt,taum1)
+        print *, t(1,1:kmt_loc,1,idic,taum1)
+        print *, t(1,1:kmt_loc,1,ic14,taum1)
+        print *, t(1,1:kmt_loc,1,ialk,taum1)
+        print *, t(1,1:kmt_loc,1,io2,taum1)
+        print *, t(1,1:kmt_loc,1,ipo4,taum1)
+        print *, t(1,1:kmt_loc,1,iphyt,taum1)
+        print *, t(1,1:kmt_loc,1,izoop,taum1)
+        print *, t(1,1:kmt_loc,1,idetr,taum1)
+        print *, t(1,1:kmt_loc,1,ino3,taum1)
+        print *, t(1,1:kmt_loc,1,idiaz,taum1)
+        print *, 'src'
+        print *, src(1,1:kmt_loc,1,itrc(idic))
+        print *, src(1,1:kmt_loc,1,itrc(ic14))
+        print *, src(1,1:kmt_loc,1,itrc(ialk))
+        print *, src(1,1:kmt_loc,1,itrc(io2))
+        print *, src(1,1:kmt_loc,1,itrc(ipo4))
+        print *, src(1,1:kmt_loc,1,itrc(iphyt))
+        print *, src(1,1:kmt_loc,1,itrc(izoop))
+        print *, src(1,1:kmt_loc,1,itrc(idetr))
+        print *, src(1,1:kmt_loc,1,itrc(ino3))
+        print *, src(1,1:kmt_loc,1,itrc(idiaz))
+        print *, 'sbc'
+        if (isst .ne. 0)    print *, sbc(i,j,isst)
+        if (isss .ne. 0)    print *, sbc(i,j,isss)
+        if (issdic .ne. 0)  print *, sbc(i,j,issdic)
+        if (issc14 .ne. 0)  print *, sbc(i,j,issc14)
+        if (issalk .ne. 0)  print *, sbc(i,j,issalk)
+        if (isso2 .ne. 0)   print *, sbc(i,j,isso2)
+        if (isspo4 .ne. 0)  print *, sbc(i,j,isspo4)
+        if (issphyt .ne. 0) print *, sbc(i,j,issphyt)
+        if (isszoop .ne. 0) print *, sbc(i,j,isszoop)
+        if (issdetr .ne. 0) print *, sbc(i,j,issdetr)
+        if (issno3 .ne. 0)  print *, sbc(i,j,issno3)
+        if (issdiaz .ne. 0) print *, sbc(i,j,issdiaz)
+        print *, 'sbc'
+        print *, sbc
+        print *, 'stf', isalt
+        print *, stf
+!        call exit(1)
+
+        print *, 'tracer, pre'
         call tracer(joff, js, je, is, ie)
+        print *, 'tracer, post'
+        print *, 't'
+        print *, t(1,1:kmt_loc,1,itemp,taum1)
+        print *, t(1,1:kmt_loc,1,isalt,taum1)
+        print *, t(1,1:kmt_loc,1,idic,taum1)
+        print *, t(1,1:kmt_loc,1,ic14,taum1)
+        print *, t(1,1:kmt_loc,1,ialk,taum1)
+        print *, t(1,1:kmt_loc,1,io2,taum1)
+        print *, t(1,1:kmt_loc,1,ipo4,taum1)
+        print *, t(1,1:kmt_loc,1,iphyt,taum1)
+        print *, t(1,1:kmt_loc,1,izoop,taum1)
+        print *, t(1,1:kmt_loc,1,idetr,taum1)
+        print *, t(1,1:kmt_loc,1,ino3,taum1)
+        print *, t(1,1:kmt_loc,1,idiaz,taum1)
+        print *, 'src'
+        print *, src(1,1:kmt_loc,1,itrc(idic))
+        print *, src(1,1:kmt_loc,1,itrc(ic14))
+        print *, src(1,1:kmt_loc,1,itrc(ialk))
+        print *, src(1,1:kmt_loc,1,itrc(io2))
+        print *, src(1,1:kmt_loc,1,itrc(ipo4))
+        print *, src(1,1:kmt_loc,1,itrc(iphyt))
+        print *, src(1,1:kmt_loc,1,itrc(izoop))
+        print *, src(1,1:kmt_loc,1,itrc(idetr))
+        print *, src(1,1:kmt_loc,1,itrc(ino3))
+        print *, src(1,1:kmt_loc,1,itrc(idiaz))
+        print *, 'sbc'
+        print *, sbc
+        print *, 'stf', isalt
+        print *, stf
+        call exit(1)
+
 
         ! SPK Add surface fluxes (calculated in setvbc.F) as a body force term in surface layer. Be very careful of tracer indexing!
         do j=js,je

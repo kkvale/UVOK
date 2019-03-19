@@ -1,6 +1,8 @@
 # c ompiler flags
 CFLAGS = -DBGCINIT=metos3dbgcinit_ -DBGCBEGIN=metos3dbgcbegin_ -DBGC=metos3dbgc_  -DBGCEND=metos3dbgcend_ -DBGCFINAL=metos3dbgcfinal_
-FFLAGS = -fdefault-real-8 -I model/UVOK/uvic -fcheck=all
+FFLAGS = -fdefault-real-8 -I model/UVOK/uvic -fcheck=all -finit-local-zero
+
+# FFLAGS = -fdefault-real-8 -I model/UVOK/uvic -fcheck=all
 
 # FFLAGS = -I model/UVOK/uvic $(UVOK_FFLAGS)
 # make BGC=model/UVOK UVOK_FFLAGS=-fdefault-real-8
