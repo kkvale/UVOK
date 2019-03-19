@@ -10,8 +10,8 @@ data/from_spk
 model/UVOK/uvic/Kiel_Jan_2017_updates_to_UVIC2.9.tar.gz
 model/UVOK/uvic/Kiel_Jan_2017_updates_to_UVIC2.9/
 model/UVOK/uvic/UVic2.9/
-model/UVOK/uvic/*.[ohFf]
-model/UVOK/*.o
+#model/UVOK/uvic/*.[ohFf]
+model/UVOK/**/*.o
 
 test/petsc/petsc-3.10.4/
 test/petsc/petsc-lite-3.10.4.tar.gz
