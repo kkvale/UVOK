@@ -36,12 +36,6 @@
 
       if (js .gt. je) return
 
-        print *, ihflx, isflx, isst, isss
-        print *, issdic, idicflx, issalk, ialkflx, isso2
-        print *, io2flx, isspo4, ipo4flx, issphyt, iphytflx, isszoop
-        print *, izoopflx, issdetr, idetrflx, issno3, ino3flx, issdiaz
-        print *, idiazflx, issc14, ic14flx
-
 #ifndef O_TMM
 !-----------------------------------------------------------------------
 !     limit the longitude indices

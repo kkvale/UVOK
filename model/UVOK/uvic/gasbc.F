@@ -54,9 +54,6 @@
 # endif
       real dmsk(is:ie,js:je)
 
-        print *, 'gasbc'
-        print *, 'co2ccn', co2ccn
-
 #ifndef O_TMM
       isp1 = is + 1
       iem1 = ie - 1
