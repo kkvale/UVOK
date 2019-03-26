@@ -1660,133 +1660,133 @@
       read  (ioun, contrl, end=101)
 101   continue
       runstep = float(int(runstep))
-      write (stdout, contrl)
+!      write (stdout, contrl)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, tsteps, end=102)
 102   continue
-      write (stdout, tsteps)
+!      write (stdout, tsteps)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, riglid, end=103)
 103   continue
-      write (stdout, riglid)
+!      write (stdout, riglid)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, mixing, end=104)
 104   continue
-      write (stdout, mixing)
+!      write (stdout, mixing)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, diagn, end=105)
 105   continue
-      write (stdout, diagn)
+!      write (stdout, diagn)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, io, end=106)
 106   continue
-      write (stdout, io)
+!      write (stdout, io)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, ictime, end=107)
 107   continue
-      write (stdout, ictime)
+!      write (stdout, ictime)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, npzd, end=108)
 108   continue
-      write (stdout, npzd)
+!      write (stdout, npzd)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, fwa, end=109)
 109   continue
-      write (stdout, fwa)
+!      write (stdout, fwa)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, blmix, end=110)
 110   continue
-      write (stdout, blmix)
+!      write (stdout, blmix)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read (ioun, hlmix, end=111)
-      write (stdout, hlmix)
+!      write (stdout, hlmix)
       call relunit (ioun)
 111   continue
 
       call getunit (ioun, 'control.in', 'f s r')
       read (ioun, isopyc, end=112)
 112   continue
-      write (stdout, isopyc)
+!      write (stdout, isopyc)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read (ioun, ppmix, end=113)
 113   continue
-      write (stdout, ppmix)
+!      write (stdout, ppmix)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read (ioun, smagnl, end=114)
 114   continue
-      write (stdout, smagnl)
+!      write (stdout, smagnl)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, sed, end=115)
 115   continue
-      write (stdout, sed)
+!      write (stdout, sed)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, embm, end=116)
 116   continue
-      write (stdout, embm)
+!      write (stdout, embm)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, carbon, end=117)
 117   continue
-      write (stdout, carbon)
+!      write (stdout, carbon)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, paleo, end=118)
 118   continue
-      write (stdout, paleo)
+!      write (stdout, paleo)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, ice, end=119)
 119   continue
-      write (stdout, ice)
+!      write (stdout, ice)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, veg, end=120)
 120   continue
-      write (stdout, veg)
+!      write (stdout, veg)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, solar, end=121)
 121   continue
-      write (stdout, solar)
+!      write (stdout, solar)
       call relunit (ioun)
 
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, mtlm, end=122)
 122   continue
-      write (stdout, mtlm)
+!      write (stdout, mtlm)
       call relunit (ioun)
 
 # if defined O_matrix
@@ -1796,7 +1796,7 @@
       call getunit (ioun, 'control.in', 'f s r')
       read  (ioun, matrix, end=123)
 123   continue
-      write (stdout, matrix)
+!      write (stdout, matrix)
       call relunit (ioun)
 # endif
 

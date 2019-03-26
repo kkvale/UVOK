@@ -72,23 +72,12 @@ subroutine metos3dbgc(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
 
     integer :: istep
     real(8) :: day_frac
+    real(8) :: dtbgc = 28800.0d0
 
     ! hard coded number of time steps
     istep = nint(t*1095.0)
     day_frac = 365.0/1095.0
     day_loc = istep*day_frac
-
-    print *, 'metos3dbgc'
-    print *, y(:,1)
-    print *, y(:,2)
-    print *, y(:,3)
-    print *, y(:,4)
-    print *, y(:,5)
-    print *, y(:,6)
-    print *, y(:,7)
-    print *, y(:,8)
-    print *, y(:,9)
-    print *, y(:,10)
 
     call uvok_copy_to(ny, nx, y)
     call uvok_calc( &
@@ -115,19 +104,8 @@ subroutine metos3dbgc(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     )
     call uvok_copy_from(ny, nx, q)
 
-    print *, 'metos3dbgc'
-    print *, q(:,1)
-    print *, q(:,2)
-    print *, q(:,3)
-    print *, q(:,4)
-    print *, q(:,5)
-    print *, q(:,6)
-    print *, q(:,7)
-    print *, q(:,8)
-    print *, q(:,9)
-    print *, q(:,10)
-
-    call exit(1)
+    ! scale
+    q = dtbgc * q
 
 end subroutine
 
@@ -166,8 +144,6 @@ subroutine setbcx (a, imt, jmtorkm)
     integer imt, jmtorkm
     real a(imt,jmtorkm)
 !    dimension a(imt,jmtorkm)
-    print *, 'setbcx'
-    print *, a
 end
 
 subroutine data (is, ie, js, je)
