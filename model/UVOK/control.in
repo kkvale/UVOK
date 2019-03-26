@@ -36,8 +36,10 @@
  &ice    /
  &veg    /
  &mtlm   BF=0.5/
- &npzd   k1n=0.7, capr=0.03, abio=0.6, alpha=0.16, nup=0.03, nupt0=0.015, redctn=6.625, geZ=0.40, redotn=10.0, 
- 	 gbio=0.4, wd0=16, nuz=0.06, jdiar=0.4, kfe_D=0.1, nud0 = 0.07, kfe=0.12, dtnpzd=28800./
+ &npzd   jdiar=1.0, dtnpzd=28800. /
+! &npzd   k1n=0.7, capr=0.03, abio=0.6, alpha=0.16, nup=0.03, nupt0=0.015,
+!         redctn=6.625, geZ=0.40, redotn=10.0, gbio=0.4, wd0=16, nuz=0.06,
+!         jdiar=0.4, kfe_D=0.1, nud0 = 0.07, kfe=0.12, dtnpzd=28800. /
  &sed    /
  &matrix dtmat=28800.0/
 
