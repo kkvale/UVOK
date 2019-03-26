@@ -14,10 +14,15 @@ tar xfz Kiel_Jan_2017_updates_to_UVIC2.9.tar.gz
 
 ## Prepare UVic model files
 
+add `#include` statement in each source file (`.F`),
+
 ```sh
 echo '#include "../UVOK_TMM_OPTIONS.h"' > include_uvok_tmm_options.h
-python prepare_uvic_files.py
+python prepare_uvic_files.py > uvic_files_list.txt
 ```
+
+protocol?
+
 
 ## Clean up:
 
