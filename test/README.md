@@ -9,6 +9,7 @@ Metos3D is installed
 ln -s ~/.metos3d/metos3d/Makefile 
 ln -s ~/.metos3d/simpack/
 ln -s ../model/
+ln -s ../model/UVOK/control.in 
 ln -s ../data/
 mkdir work/
 
