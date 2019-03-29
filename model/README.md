@@ -21,8 +21,6 @@ echo '#include "../UVOK_TMM_OPTIONS.h"' > include_uvok_tmm_options.h
 python prepare_uvic_files.py > uvic_files_list.txt
 ```
 
-protocol?
-
 
 ## Clean up:
 
