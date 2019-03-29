@@ -1,6 +1,22 @@
 # Metos3D UVOK test run
 
 
+> **Note:** The UVic model code is old. Back then no one seemed to care about 
+> ...
+> ... not to mention good scientific programming.
+> ... clear interfaces, librarization
+> ... `real` has no explicit type such as `real(4)` or `real(8)`,
+> this has to be configured via a compiler switch,
+> unfortunately, every compiler has its own switch for that, for instance,
+> GNU, `gfortran`, `-fdefault-real-8`
+> Intel, `ifort`, `-r8`
+> IBM, `xlf`, `-qrealsize=8`
+> and so on and so forth ...
+> even worse, if using MPI compiler wrappers (along wit a specific MPI library),
+> for instance, Open MPI, MPICH, MVAPICH, ...   
+> they are not distiguishable from the shell command name, and 
+> thus, you have to swallow the pill, you have to provide them by yourself, 
+
 PETSc is installed
 Metos3D is installed
 
@@ -45,4 +61,16 @@ make PETSC_DIR=/Users/jpicau/Documents/development/uvok/test/petsc/petsc-3.10.4 
 
 ```
 
+openmpi, does not work, 
 
+```
+python2.7 ./configure --with-x=0 --CC=mpicc --CXX=mpic++ --FC=mpif90 --FFLAGS='-Wl,-rpath,/Users/jpicau/miniconda3/lib' --with-debugging=0
+ make PETSC_DIR=/Users/jpicau/Documents/development/uvok/test/petsc/petsc-3.10.4 PETSC_ARCH=arch-darwin-c-opt all
+```
+
+dowload mpich, only one that works until now 
+
+```
+python2.7 ./configure --with-x=0 --with-debugging=0 --CC=gcc --CXX=g++ --FC=gfortran --FFLAGS='-Wl,-rpath,/Users/jpicau/miniconda3/lib' --download-mpich=1
+make PETSC_DIR=/Users/jpicau/Documents/development/uvok/test/petsc/petsc-3.10.4 PETSC_ARCH=arch-darwin-c-opt all
+```
