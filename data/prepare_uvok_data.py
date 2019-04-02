@@ -256,8 +256,8 @@ def prepare_uvok_data(ctx):
         '''
     # input directories
     ctx.uvok_path       = 'tmm/models/current/uvok1.0'
-    ctx.uvic_tmm_path   = 'UVic_Kiel_increase_isopyc_diff'
-    ctx.uvic_bgc_path   = 'UVic_Kiel_increase_isopyc_diff_model_data'
+    ctx.uvic_tmm_path   = 'UVicKielIncrIsopycDiff/'
+    ctx.uvic_bgc_path   = 'UVicKielIncrIsopycDiff_model_data'
     # mask
     file_path = ctx.uvic_bgc_path + '/grid.mat'
     f = open_mat(file_path)

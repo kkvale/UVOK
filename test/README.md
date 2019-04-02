@@ -1,6 +1,5 @@
 # Metos3D UVOK test run
 
-
 > **Note:** The UVic model code is old. Back then no one seemed to care about 
 > ...
 > ... not to mention good scientific programming.
@@ -20,7 +19,6 @@
 PETSc is installed
 Metos3D is installed
 
-
 ```sh
 ln -s ~/.metos3d/metos3d/Makefile 
 ln -s ~/.metos3d/simpack/
@@ -35,7 +33,6 @@ make BGC=model/UVOK
 # ifort, FFLAGS+=-r8
 # gfortran, FFLAGS+=-fdefault-real-8
 # xlf, FPPFLAG+=-WF, FFLAGS+=-qrealsize=8 -qzerosize
-
 
 ```
 
