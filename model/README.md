@@ -14,8 +14,9 @@ tar xfz Kiel_Jan_2017_updates_to_UVIC2.9.tar.gz
 
 ## Prepare UVic model files
 
-Add `#include` statement in each source file (`.F`) and copy the UVic files from appropiate directories.
-Patch `UVic_ESCM.F` file.  Comment out write statements in `read_namelist`.
+- Add `#include` statement in each source file (`.F`).
+- Copy the UVic files from appropiate directories.
+- Patch `UVic_ESCM.F` file (comment out write statements in `read_namelist`).
 
 ```sh
 echo '#include "../UVOK_TMM_OPTIONS.h"' > include_uvok_tmm_options.h
