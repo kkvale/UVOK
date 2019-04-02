@@ -20,7 +20,7 @@ python prepare_uvic_files.py > uvic_files_list.txt
 patch UVic_ESCM.F UVic_ESCM.F.patch
 ```
 
-> **What happened? ** Added `#include` statement in each source file (`.F`).
+> **What happened?** Added `#include` statement in each source file (`.F`).
 > Copies the UVic files from appropiate directories.
 > Patched `UVic_ESCM.F` file (commented out write statements in `read_namelist`).
 
