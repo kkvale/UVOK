@@ -1,0 +1,92 @@
+1663c1663
+<       write (stdout, contrl)
+---
+> !      write (stdout, contrl)
+1669c1669
+<       write (stdout, tsteps)
+---
+> !      write (stdout, tsteps)
+1675c1675
+<       write (stdout, riglid)
+---
+> !      write (stdout, riglid)
+1681c1681
+<       write (stdout, mixing)
+---
+> !      write (stdout, mixing)
+1687c1687
+<       write (stdout, diagn)
+---
+> !      write (stdout, diagn)
+1693c1693
+<       write (stdout, io)
+---
+> !      write (stdout, io)
+1699c1699
+<       write (stdout, ictime)
+---
+> !      write (stdout, ictime)
+1705c1705
+<       write (stdout, npzd)
+---
+> !      write (stdout, npzd)
+1711c1711
+<       write (stdout, fwa)
+---
+> !      write (stdout, fwa)
+1717c1717
+<       write (stdout, blmix)
+---
+> !      write (stdout, blmix)
+1722c1722
+<       write (stdout, hlmix)
+---
+> !      write (stdout, hlmix)
+1729c1729
+<       write (stdout, isopyc)
+---
+> !      write (stdout, isopyc)
+1735c1735
+<       write (stdout, ppmix)
+---
+> !      write (stdout, ppmix)
+1741c1741
+<       write (stdout, smagnl)
+---
+> !      write (stdout, smagnl)
+1747c1747
+<       write (stdout, sed)
+---
+> !      write (stdout, sed)
+1753c1753
+<       write (stdout, embm)
+---
+> !      write (stdout, embm)
+1759c1759
+<       write (stdout, carbon)
+---
+> !      write (stdout, carbon)
+1765c1765
+<       write (stdout, paleo)
+---
+> !      write (stdout, paleo)
+1771c1771
+<       write (stdout, ice)
+---
+> !      write (stdout, ice)
+1777c1777
+<       write (stdout, veg)
+---
+> !      write (stdout, veg)
+1783c1783
+<       write (stdout, solar)
+---
+> !      write (stdout, solar)
+1789c1789
+<       write (stdout, mtlm)
+---
+> !      write (stdout, mtlm)
+1799c1799
+<       write (stdout, matrix)
+---
+> !      write (stdout, matrix)
