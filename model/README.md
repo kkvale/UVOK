@@ -21,7 +21,7 @@ patch UVic_ESCM.F UVic_ESCM.F.patch
 ```
 
 > **What happened?** Added `#include` statement in each source file (`.F`).
-> Copies the UVic files from appropiate directories.
+> Copies the UVic files from appropiate directories (see `uvic_files_list.txt`).
 > Patched `UVic_ESCM.F` file (commented out write statements in `read_namelist`).
 
 ## Clean up:
