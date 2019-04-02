@@ -71,10 +71,10 @@ C
         c2dtts = dtts
 
         ! SPK copy over/set grid variables (based on grids.F)
-        dzt(:) = c0
-        dzw(:) = c0
-        zt(:) = c0
-        zw(:) = c0
+!        dzt(:) = c0
+!        dzw(:) = c0
+!        zt(:) = c0
+!        zw(:) = c0
 
 !        do k=1,km
         do k=1,nzmax

@@ -21,6 +21,7 @@ echo '#include "../UVOK_TMM_OPTIONS.h"' > include_uvok_tmm_options.h
 python prepare_uvic_files.py > uvic_files_list.txt
 ```
 
+- comment/patch out write statements in `read_namelist`
 
 ## Clean up:
 

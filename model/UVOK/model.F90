@@ -64,7 +64,6 @@ subroutine metos3dbgc(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
 
     real(8) :: trace_avg(10) = (/ &
         2.315e0, 2.3140740e-012, 2.429e0, 0.1692e0, 0.543e0, 0.14e0, 1.4e-002, 1.0e-004, 5.3e0, 1.4e-002 /)
-    integer :: debug = 1
     real(8) :: emp_glob = 0.d0
     real(8) :: gasexfluxloc = 0.d0
     real(8) :: totfluxloc = 0.d0
@@ -73,6 +72,7 @@ subroutine metos3dbgc(ny, nx, nu, nb, nd, dt, q, t, y, u, b, d, ndiag, diag)
     integer :: istep
     real(8) :: day_frac
     real(8) :: dtbgc = 28800.0d0
+    integer :: debug = 1
 
     ! hard coded number of time steps
     istep = nint(t*1095.0)
