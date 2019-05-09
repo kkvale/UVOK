@@ -198,8 +198,56 @@ def prepare_forcing(ctx):
 
 def prepare_geometry(ctx):
     '''Prepare geometry files.'''
-    # land sea mask
+    # grid mask
     file_in = ctx.uvic_bgc_path + '/grid.mat'
+    file_out = 'geometry/uvic-100x100x19-grid.nc'
+    print(file_out)
+    with h5.File(file_out, 'w') as f:
+        # global
+        f.attrs['description'] = 'grid file for UVIC resolution, 1 x 19 x 100 x 100'
+        f.attrs['history'] = 'created with: ./prepare_uvok_data.py (Jaroslaw Piwonski (CAU), jpi@informatik.uni-kiel.de)'
+        # longitude
+        f['lon'] = read_from_mat_file(ctx, file_in, 'x')[0]
+        f['lon'].dims.create_scale(f['lon'])
+        f['lon'].attrs['standard_name'] = 'longitude'
+        f['lon'].attrs['long_name'] = 'longitude'
+        f['lon'].attrs['units'] = 'degrees_east'
+        f['lon'].attrs['axis'] = 'X'
+        # latitude
+        f['lat'] = read_from_mat_file(ctx, file_in, 'y')[0]
+        f['lat'].dims.create_scale(f['lat'])
+        f['lat'].attrs['standard_name'] = 'latitude'
+        f['lat'].attrs['long_name'] = 'latitude'
+        f['lat'].attrs['units'] = 'degrees_north'
+        f['lat'].attrs['axis'] = 'Y'
+        # depth
+        f['depth'] = read_from_mat_file(ctx, file_in, 'z')[0]
+        f['depth'].dims.create_scale(f['depth'])
+        f['depth'].attrs['standard_name'] = 'depth'
+        f['depth'].attrs['long_name'] = 'depth_below_sea'
+        f['depth'].attrs['units'] = 'm'
+        f['depth'].attrs['positive'] = 'down'
+        f['depth'].attrs['axis'] = 'Z'
+        # time
+        f.create_dataset('time', (1,), maxshape=(None,))
+        f['time'][0] = 0.0
+        f['time'].dims.create_scale(f['time'])
+        f['time'].attrs['standard_name'] = 'time'
+        f['time'].attrs['long_name'] = 'time'
+        f['time'].attrs['units'] = 'hours since 2000-01-01 00:00:00'
+        f['time'].attrs['calendar'] = '365_day'
+        f['time'].attrs['axis'] = 'T'
+        # grid mask
+        mask4d = np.expand_dims(ctx.mask, axis=0)
+        grid_mask = f.create_dataset('grid_mask', data=mask4d, shape=(1,19,100,100), compression='gzip', dtype='f8')
+        grid_mask.dims[0].attach_scale(f['time'])
+        grid_mask.dims[1].attach_scale(f['depth'])
+        grid_mask.dims[2].attach_scale(f['lat'])
+        grid_mask.dims[3].attach_scale(f['lon'])
+        grid_mask[mask4d] = -9.e+33
+        grid_mask.attrs['_FillValue'] = -9.e+33
+        grid_mask.attrs['missing_value'] = -9.e+33
+    # land sea mask
     lsm = read_from_mat_file(ctx, file_in, 'ideep')
     lsm = spsp.csr_matrix(lsm)
     write_petsc_matrix('geometry/landSeaMask.petsc', lsm)

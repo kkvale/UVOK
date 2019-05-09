@@ -1,5 +1,13 @@
 # Metos3D UVOK test run
 
+```
+mistral.dkrz.de
+rzcluster.rz.uni-kiel.de
+nesh-fe.rz.uni-kiel.de
+glogin.hlrn.de
+```
+
+
 PETSc is installed, tested PETSc 3.7 - 3.11
 
 ```sh

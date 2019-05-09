@@ -1,0 +1,28 @@
+
+Name, Scale, Unit, Description:
+    # prognostic variables
+    - dic,      1.,         mmol C m-3,     dic
+    - c14,      1.,         mmol C m-3,     c14
+    - alk,      1.,         mmol C m-3,     alk
+    - o2,       1.,         kmol O2 m-3,     o2
+    - po4,      1.,         kmol P m-3,     po4
+    - phyt,     1.,         kmol P m-3,     phyt
+    - zoop,     1.,         kmol P m-3,     zoop
+    - detr,     1.,         kmol P m-3,     detr
+    - no3,      1.,         kmol P m-3,     no3
+    - diaz,     1.,         kmol P m-3,     diaz
+
+#Name, Scale, Unit, Description:
+## prognostic variables
+#- DIC,      1.,         mmol C m-3,     dic
+#- C14,      1.,         mmol C m-3,     c14
+#- ALK,      1.,         mmol C m-3,     alk
+#- O2,       1.,         kmol O2 m-3,     o2
+#- PO4,      1.,         kmol P m-3,     po4
+#- PHY,     1.,         kmol P m-3,     phyt
+#- ZOO,     1.,         kmol P m-3,     zoop
+#- DET,     1.,         kmol P m-3,     detr
+#- NO3,      1.,         kmol P m-3,     no3
+#- DIAZ,     1.,         kmol P m-3,     diaz
+
+
